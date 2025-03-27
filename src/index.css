@@ -1,0 +1,11 @@
+@import "tailwindcss";
+html,
+body {
+  height: 100%;
+  margin: 0;
+  background-color: black; /* Set background to black */
+}
+
+#root {
+  height: 100%; /* Ensure the React root element takes up the full height */
+}
