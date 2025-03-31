@@ -1,9 +1,10 @@
 import Colors from "./Colors";
 
 const ButtonStyle ={
-    base:"w-[300px] h-[40px] text-base font-bold font-['Outfit'] rounded-xl flex justify-center items-center cursor-pointer mt-2",
+    base:"h-[46px] text-base font-normal rounded-2xl flex justify-center items-center cursor-pointer mt-2",
     color: Colors.white,
     backgroundColor:Colors.deepTeal,
-    hoverBackgroundColor:Colors.skyTeal
+    hoverBackgroundColor:Colors.skyTeal,
+    borderColor:Colors.red
 }
 export default ButtonStyle;

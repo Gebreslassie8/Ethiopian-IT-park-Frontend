@@ -16,11 +16,12 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  ResponsiveContainer,
+  ResponsiveContainer,Legend
 } from "recharts";
 import { User, FileText, CloudUpload, UserPlus } from "lucide-react"; 
 import Colors from "../Styles/Colors";
 import Table from "../Components/Table/Table";
+import MostViewedDownloaded from "./MostViewedContents";
 
 const Overview = () => {
   const stats = [
@@ -77,26 +78,13 @@ const Overview = () => {
     { name: "Dec", users: 7800 },
   ];
 
-  const topViewedContents = [
-    {
-      id: 1,
-      title: "The Future of AI",
-      category: "Artificial Intelligence",
-      creator: "Sara Mohammed",
-    },
-    {
-      id: 2,
-      title: "Web3 and Blockchain",
-      category: "Technology",
-      creator: "John Doe",
-    },
-    {
-      id: 3,
-      title: "React Performance Optimization",
-      category: "Web Development",
-      creator: "Emily Brown",
-    },
-  ];
+ 
+const dataforViewed = [
+  { category: "Fiction", views: 12000, downloads: 4000 },
+  { category: "Science", views: 8000, downloads: 3000 },
+  { category: "History", views: 9000, downloads: 3500 },
+  { category: "Technology", views: 7000, downloads: 2500 },
+];
 
   const columns = [
     { Header: "Id", accessor: "id" },
@@ -166,7 +154,9 @@ const Overview = () => {
           </ResponsiveContainer>
         </div>
       </div>
-      {/* Top Viewed Contents */}
+      {/* most viewed/downloaded contents */}
+      <MostViewedDownloaded/>
+      {/* Top Viewed Contents
       <div className="bg-white shadow-md p-6 rounded-xl">
         <Text
           className="text-lg font-semibold mb-4"
@@ -175,7 +165,7 @@ const Overview = () => {
           Top Viewed Contents
         </Text>
         <Table columns={columns} data={topViewedContents} />
-      </div>
+      </div> */}
     </div>
   );
 };

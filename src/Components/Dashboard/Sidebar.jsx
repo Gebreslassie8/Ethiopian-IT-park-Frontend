@@ -6,7 +6,7 @@ import {
   Settings,
   Layers,
   Menu,
-} from "lucide-react"
+} from "lucide-react";
 import Colors from "../../Styles/Colors";
 import itparklogo from "../../assets/itparklogo.png";
 
@@ -21,13 +21,14 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, isMobile }) => {
 
   return (
     <div
-      className={`fixed lg:relative h-full p-4 transition-all duration-300 z-50 shadow-lg ${
-        isSidebarOpen ? "w-[350px]" : "w-0 lg:w-[400px]"
+      className={`fixed lg:relative h-full px-4 py-6 transition-all duration-300 z-50 shadow-lg ${
+        isSidebarOpen ? "w-[300px] sm:w-[350px]" : "w-0 lg:w-[350px]"
       } ${isMobile && !isSidebarOpen ? "hidden" : "block"}`}
       style={{
         background: `linear-gradient(to bottom, ${Colors.deepTeal}, ${Colors.deepBlue})`,
       }}
     >
+      {/* Mobile Menu Button */}
       {isMobile && (
         <button
           className="absolute top-4 right-4 p-2 text-white hover:bg-gray-200 rounded-xl"
@@ -37,20 +38,22 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, isMobile }) => {
         </button>
       )}
 
+      {/* Logo */}
       <div className="flex justify-center mb-6">
         <img
           src={itparklogo}
           alt="Logo"
-          className="w-auto h-[160px] object-contain brightness-110 contrast-150"
+          className="w-auto h-[140px] md:h-[160px] object-contain brightness-110 contrast-150 mb-4"
         />
       </div>
 
-      <nav className="flex flex-col gap-4">
+      {/* Navigation Links */}
+      <nav className="flex flex-col gap-2">
         {menuItems.map((item) => (
           <NavLink
             key={item.name}
             to={item.path}
-            className="flex items-center px-6 py-3 rounded-xl transition-all duration-300 text-white"
+            className="flex items-center px-4 py-2 rounded-lg transition-all duration-300 text-white text-sm md:text-base lg:text-lg"
             style={({ isActive }) => ({
               backgroundColor: isActive ? Colors.deepAqua : "transparent",
             })}
@@ -65,7 +68,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, isMobile }) => {
             }
           >
             <span className="text-base md:text-lg">{item.icon}</span>
-            <span className="ml-4 text-lg md:text-xl">{item.name}</span>
+            <span className="ml-3">{item.name}</span>
           </NavLink>
         ))}
       </nav>

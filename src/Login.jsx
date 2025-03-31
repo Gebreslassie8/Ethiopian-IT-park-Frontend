@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Colors from "./Styles/Colors";
 import { Eye, EyeOff } from "lucide-react";
 import ReusableForm from "./Components/Forms/ReusableForm";
+import Button from "./Components/Button/ReusableButton";
 import LoginValidationSchema from "./Schema/LoginValidationSchema";
 
 const Login = () => {
@@ -32,7 +33,6 @@ const Login = () => {
     password: "",
   };
 
-
   // Form Submission Handler
   const handleSubmit = (values, { resetForm }) => {
     console.log(values);
@@ -41,36 +41,58 @@ const Login = () => {
 
   return (
     <div className="w-full h-screen flex justify-center items-center">
-      <div className="w-[890px] h-[600px] flex bg-white rounded-xl overflow-hidden shadow-lg">
+      <div className="w-[840px] h-[600px] flex bg-white rounded-xl overflow-hidden shadow-lg">
         {/* Left Section */}
-        <div className="w-[400px] rounded-tl-xl rounded-bl-xl" style={{ backgroundColor: Colors.deepTeal }}></div>
+        <div
+          className="w-[400px] rounded-tl-xl rounded-bl-xl"
+          style={{ backgroundColor: Colors.deepTeal }}
+        ></div>
 
         {/* Right Section - Form */}
-        <div className="w-[440px] flex flex-col justify-center items-center px-10">
-          <h2 className="justify-start text-3xl font-bold font-['Outfit'] mb-8" style={{ color: Colors.deepTeal }}>
+        <div className="w-[400px] flex flex-col justify-center items-center px-10 ">
+          <h2
+            className="justify-start text-3xl font-bold font-['Outfit'] mb-8"
+            style={{ color: Colors.deepTeal }}
+          >
             Login
           </h2>
 
-          {/* Reusable Form Component */}
+          {/* Reusable Form Component with Form ID */}
           <ReusableForm
+            id="loginForm"
             fields={fields}
             initialValues={initialValues}
             validationSchema={LoginValidationSchema}
             onSubmit={handleSubmit}
-            submitButton={{
-              label: "Login"
-            }}
           />
 
           <div className="w-[300px] flex justify-end mt-2">
-            <Link to="/forgot-password" className="text-sm" style={{ color: Colors.deepTeal }}>
+            <Link
+              to="/forgot-password"
+              className="text-sm"
+              style={{ color: Colors.deepTeal }}
+            >
               Forgot Password?
             </Link>
           </div>
+          {/* External Submit Button linked to the form */}
+          <Button
+            type="submit"
+            label="Login"
+            className="w-full mt-4"
+            formId="loginForm"
+          />
 
-          <p className="text-sm text-center mt-4" style={{ color: Colors.smokyGray }}>
+          <p
+            className="text-sm text-center mt-4"
+            style={{ color: Colors.smokyGray }}
+          >
             Don't have an account?{" "}
-            <Link to="/signup" className="cursor-pointer" style={{ color: Colors.deepTeal }}>
+            <Link
+              to="/signup"
+              className="cursor-pointer"
+              style={{ color: Colors.deepTeal }}
+            >
               Signup
             </Link>
           </p>

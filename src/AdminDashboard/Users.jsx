@@ -1,8 +1,10 @@
 
 import { useState } from "react";
-import { Trash, Edit, Search, Plus } from "lucide-react";
-import Colors from "../Styles/Colors";
+import { Trash, Edit } from "lucide-react";
 import Table from "../Components/Table/Table";
+import Button from "../Components/Button/ReusableButton";
+import SearchFilterComponent from "../Components/SearchAndFilter/SearchFilterComponent";
+import AddUserForm from "../Components/Forms/AddNewUser";
 
 const Users = () => {
   const [users] = useState([
@@ -15,10 +17,15 @@ const Users = () => {
       status: "Active",
     },
   ]);
+  const [showAddUserForm, setShowAddUserForm] = useState(false);
 
   const handleDelete = (id) => {
     console.log(`Delete user with id: ${id}`);
   };
+  const handleAddUser = (newUser) => {
+    setUsers([...users, { ...newUser, id: users.length + 1, createdAt: new Date().toLocaleString() }]);
+  };
+
 
   const columns = [
     { Header: "Id", accessor: "id" },
@@ -55,41 +62,37 @@ const Users = () => {
       ),
     },
   ];
+   const filterOptions = [
+      { label: "Filter by", value: "" },
+      { label: "Active", value: "active" },
+      { label: "Inactive", value: "inactive" },
+      {label:"Internal User" ,value:"internal user"},
+      {label:"External User" ,value:"external user"}
+    ];
 
   return (
-    <div className="p-4">
+    <div>
       {/* Container for search, filter, and add button */}
       <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2 w-1/3">
-          <div className="flex items-center border-2 border-gray-600 rounded-xl px-4 py-2 text-base md:text-lg flex-grow">
-            <Search className="mr-2" style={{ color: Colors.smokyGray }} />
-            <input
-              type="text"
-              placeholder="Search User"
-              className="flex-grow outline-none"
-            />
-          </div>
-          <select className="border-2 border-gray-600 rounded-xl px-4 py-2 text-base md:text-lg">
-            <option value="">Filter by</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-          </select>
-        </div>
-
-        {/* Add Button*/}
-        <button
-          className="flex items-center gap-2 text-white px-4 md:px-6 py-2 rounded-2xl text-base md:text-lg"
-          style={{ backgroundColor: Colors.deepTeal }}
-          onMouseEnter={(e) =>
-            (e.currentTarget.style.backgroundColor = Colors.skyTeal)
-          }
-          onMouseLeave={(e) =>
-            (e.currentTarget.style.backgroundColor = Colors.deepTeal)
-          }
-        >
-          <Plus />
-          Add User
-        </button>
+        <SearchFilterComponent
+         searchPlaceholder="Search Users..."
+         onSearchChange={(e) => console.log(`Search: ${e.target.value}`)}
+         filterOptions={filterOptions}
+         onFilterChange={(e) => console.log(`Filter: ${e.target.value}`)}
+          />
+        <Button
+            type="button"
+            label="Add User"
+            icon="Plus"
+            className="my-2 px-4 md:px-6 text-base md:text-lg gap-2 py-2"
+            onClick={()=> setShowAddUserForm(true)}
+          />
+           {showAddUserForm && (
+        <AddUserForm
+          onAddUser={handleAddUser}
+          onCancel={() => setShowAddUserForm(false)}
+        />
+      )}
       </div>
 
       <Table columns={columns} data={users} />

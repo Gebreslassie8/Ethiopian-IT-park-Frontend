@@ -1,7 +1,8 @@
 import { Menu, LogOut } from "lucide-react";
 import { useLocation } from "react-router-dom"; // Import the useLocation hook
 import Colors from "../../Styles/Colors";
-import profilep from "../../assets/profilep.jpg"
+import profilep from "../../assets/profilep.jpg";
+import Button from "../Button/ReusableButton";
 
 const DashboardHeader = ({ isMobile, setIsSidebarOpen }) => {
   const location = useLocation(); // Get the current location for the header title
@@ -19,7 +20,10 @@ const DashboardHeader = ({ isMobile, setIsSidebarOpen }) => {
         </button>
       )}
 
-      <h2 className="text-2xl md:text-3xl font-semibold" style={{ color: Colors.deepAqua }}>
+      <h2
+        className="text-2xl md:text-3xl font-semibold"
+        style={{ color: Colors.deepAqua }}
+      >
         {activeTab}
       </h2>
 
@@ -29,15 +33,12 @@ const DashboardHeader = ({ isMobile, setIsSidebarOpen }) => {
           alt="Profile"
           className="w-[50px] h-[50px] rounded-full object-cover"
         />
-        <button
-          className="flex items-center gap-2  text-white px-4 md:px-6 py-2 rounded-2xl text-base md:text-lg"
-          style={{ backgroundColor: Colors.deepTeal }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = Colors.skyTeal)}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = Colors.deepTeal)}
-        >
-          <LogOut />
-          Log Out
-        </button>
+        {/* <Button
+          type="button"
+          label="Log Out"
+          icon="LogOut"
+          className="my-2 px-4 md:px-6 text-base md:text-lg gap-2 py-2"
+        /> */}
       </div>
     </div>
   );

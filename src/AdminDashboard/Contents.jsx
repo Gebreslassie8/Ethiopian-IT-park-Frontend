@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Trash, Edit, Search, Plus } from "lucide-react";
-import Colors from "../Styles/Colors";
+import { Trash, Edit } from "lucide-react";
 import Table from "../Components/Table/Table";
+import Button from "../Components/Button/ReusableButton";
+import SearchFilterComponent from "../Components/SearchAndFilter/SearchFilterComponent";
 
 const Contents = () => {
   const [contents, setContents] = useState([
@@ -58,41 +59,31 @@ const Contents = () => {
       ),
     },
   ];
+  const filterOptions=[ 
+    {label:"filter by" ,value:""},
+    {label:"Actitve",value:"active"},
+   {label:"Inactive" ,value:"inactive"}
+  ];
 
   return (
-    <div className="p-4">
+    <div>
       {/* search, filter, and add button */}
       <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2 w-1/3">
-          <div className="flex items-center border-2 border-gray-600 rounded-xl px-4 py-2 text-base md:text-lg flex-grow">
-            <Search className="mr-2" style={{ color: Colors.smokyGray }} />
-            <input
-              type="text"
-              placeholder="Search Content"
-              className="flex-grow outline-none"
-            />
-          </div>
-          <select className="border-2 border-gray-600 rounded-xl px-4 py-2 text-base md:text-lg">
-            <option value="">Filter by</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-          </select>
-        </div>
+        <SearchFilterComponent
+         searchPlaceholder="Search Contents..."
+         onSearchChange={(e)=> console.log (e.target.value)}
+         filterOptions={filterOptions}
+         onFilterChange={(e)=> console.log (e.target.value)}
+         />
 
         {/* Add Button */}
-        <button
-          className="flex items-center gap-2 text-white px-4 md:px-6 py-2 rounded-2xl text-base md:text-lg"
-          style={{ backgroundColor: Colors.deepTeal }}
-          onMouseEnter={(e) =>
-            (e.currentTarget.style.backgroundColor = Colors.skyTeal)
-          }
-          onMouseLeave={(e) =>
-            (e.currentTarget.style.backgroundColor = Colors.deepTeal)
-          }
-        >
-          <Plus />
-          Add Content
-        </button>
+
+        <Button
+          type="button"
+          label="Upload Content"
+          icon="Plus"
+          className="my-2 px-4 md:px-6 text-base md:text-lg gap-2 py-2"
+        />
       </div>
 
       <Table columns={columns} data={contents} />
