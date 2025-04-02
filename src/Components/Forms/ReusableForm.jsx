@@ -1,7 +1,8 @@
 import { useFormik } from "formik";
+import PropTypes from "prop-types";
 import Colors from "../../Styles/Colors";
 
-const ReusableForm = ({ id, fields, onSubmit, initialValues, validationSchema }) => {
+const ReusableForm = ({ id, fields, onSubmit, initialValues, validationSchema, render }) => {
   const formik = useFormik({
     initialValues,
     validationSchema,
@@ -11,7 +12,7 @@ const ReusableForm = ({ id, fields, onSubmit, initialValues, validationSchema })
   return (
     <form id={id} onSubmit={formik.handleSubmit} className="space-y-4 w-full">
       {fields.map((field) => (
-        <div key={field.name} className="flex flex-col ">
+        <div key={field.name} className="flex flex-col">
           <label className="font-normal font-[sans-serif] text-base" style={{ color: Colors.smokyGray }}>
             {field.label}
           </label>
@@ -29,21 +30,25 @@ const ReusableForm = ({ id, fields, onSubmit, initialValues, validationSchema })
               />
               {/* Optional Icon for fields like Password */}
               {field.icon && (
-                <span
+                <button
+                  type="button"
                   className="absolute right-3 cursor-pointer"
                   onClick={field.onIconClick}
-                  style={{color:Colors.mediumGray}}
+                  style={{ color: Colors.mediumGray }}
                 >
                   {field.icon}
-                </span>
+                </button>
               )}
             </div>
           )}
 
           {/* Dropdown (Select) */}
           {field.type === "select" && (
-            <select {...formik.getFieldProps(field.name)} className="border p-2 rounded-xl w-full" 
-              style={{ backgroundColor: Colors.lightGray, color: Colors.gray }}>
+            <select
+              {...formik.getFieldProps(field.name)}
+              className="border p-2 rounded-xl w-full"
+              style={{ backgroundColor: Colors.lightGray, color: Colors.gray }}
+            >
               {field.options.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
@@ -101,8 +106,35 @@ const ReusableForm = ({ id, fields, onSubmit, initialValues, validationSchema })
           )}
         </div>
       ))}
+
+      {/* Render buttons (like Cancel) inside formik scope */}
+      {render && render(formik)}
     </form>
   );
+};
+
+ReusableForm.propTypes = {
+  id: PropTypes.string.isRequired,
+  fields: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      type: PropTypes.oneOf(["text", "email", "password", "select", "radio", "checkbox"]).isRequired,
+      label: PropTypes.string.isRequired,
+      placeholder: PropTypes.string,
+      icon: PropTypes.element,
+      onIconClick: PropTypes.func,
+      options: PropTypes.arrayOf(
+        PropTypes.shape({
+          value: PropTypes.string.isRequired,
+          label: PropTypes.string.isRequired,
+        })
+      ),
+    })
+  ).isRequired,       
+  onSubmit: PropTypes.func.isRequired,
+  initialValues: PropTypes.object.isRequired,
+  validationSchema: PropTypes.object.isRequired,
+  render: PropTypes.func, // New prop to render extra elements using formik
 };
 
 export default ReusableForm;

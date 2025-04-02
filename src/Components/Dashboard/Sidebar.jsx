@@ -1,31 +1,24 @@
+import React from "react";
+import PropTypes from "prop-types";
 import { NavLink } from "react-router-dom";
-import {
-  User,
-  FileText,
-  BarChart,
-  Settings,
-  Layers,
-  Menu,
-} from "lucide-react";
+import { Menu } from "lucide-react";
 import Colors from "../../Styles/Colors";
 import itparklogo from "../../assets/itparklogo.png";
 
-const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, isMobile }) => {
-  const menuItems = [
-    { name: "Overview", icon: <Layers />, path: "/dashboard/overview" },
-    { name: "Users", icon: <User />, path: "/dashboard/users" },
-    { name: "Contents", icon: <FileText />, path: "/dashboard/contents" },
-    { name: "Analytics", icon: <BarChart />, path: "/dashboard/analytics" },
-    { name: "Settings", icon: <Settings />, path: "/dashboard/settings" },
-  ];
-
+const Sidebar = ({
+  isSidebarOpen,
+  setIsSidebarOpen,
+  isMobile,
+  menuItems,
+  sidebarStyles
+}) => {
   return (
     <div
       className={`fixed lg:relative h-full px-4 py-6 transition-all duration-300 z-50 shadow-lg ${
         isSidebarOpen ? "w-[300px] sm:w-[350px]" : "w-0 lg:w-[350px]"
       } ${isMobile && !isSidebarOpen ? "hidden" : "block"}`}
       style={{
-        background: `linear-gradient(to bottom, ${Colors.deepTeal}, ${Colors.deepBlue})`,
+        background: sidebarStyles.background || `linear-gradient(to bottom, ${Colors.deepTeal}, ${Colors.deepBlue})`,
       }}
     >
       {/* Mobile Menu Button */}
@@ -43,17 +36,17 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, isMobile }) => {
         <img
           src={itparklogo}
           alt="Logo"
-          className="w-auto h-[140px] md:h-[160px] object-contain brightness-110 contrast-150 mb-4"
+          className="w-auto h-[140px] md:h-[160px] object-contain brightness-110 contrast-150 my-4"
         />
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex flex-col gap-2">
+      <nav className="flex flex-col gap-4">
         {menuItems.map((item) => (
           <NavLink
             key={item.name}
             to={item.path}
-            className="flex items-center px-4 py-2 rounded-lg transition-all duration-300 text-white text-sm md:text-base lg:text-lg"
+            className="flex items-center px-4 py-3 rounded-lg transition-all duration-300 text-white text-sm md:text-base lg:text-lg"
             style={({ isActive }) => ({
               backgroundColor: isActive ? Colors.deepAqua : "transparent",
             })}
@@ -74,6 +67,22 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, isMobile }) => {
       </nav>
     </div>
   );
+};
+
+Sidebar.propTypes = {
+  isSidebarOpen: PropTypes.bool.isRequired,
+  setIsSidebarOpen: PropTypes.func.isRequired,
+  isMobile: PropTypes.bool.isRequired,
+  menuItems: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      icon: PropTypes.element.isRequired,
+      path: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  sidebarStyles: PropTypes.shape({
+    background: PropTypes.string,
+  }),
 };
 
 export default Sidebar;

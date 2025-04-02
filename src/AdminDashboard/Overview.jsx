@@ -1,31 +1,14 @@
 import React from "react";
-import {
-  Text,
-  Stat,
-  StatLabel,
-  StatNumber,
-  StatHelpText,
-  StatArrow,
-  Card,
-  CardBody,
-  Icon,
-} from "@chakra-ui/react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,Legend
-} from "recharts";
-import { User, FileText, CloudUpload, UserPlus } from "lucide-react"; 
-import Colors from "../Styles/Colors";
-import Table from "../Components/Table/Table";
-import MostViewedDownloaded from "./MostViewedContents";
+import StatCard from "../Components/Overview/Card";
+import UserGrowthChart from "../Components/Overview/UserGrowthChart";
+import {User,FileText,CloudUpload,UserPlus} from "lucide-react";
+import RecentlyUploadedContentsTable from "../Components/Overview/RecentlyUploadedContentsTable";
+import MostViewedContents from "../Components/Overview/MostViewedContents";
 
 const Overview = () => {
   const stats = [
     {
+      id: "total-users",
       title: "Total Users",
       value: "15,786",
       change: "32.40%",
@@ -35,6 +18,7 @@ const Overview = () => {
       changeText: "Increased last month",
     },
     {
+      id: "total-content",
       title: "Total Content",
       value: "8,785",
       change: "18.2%",
@@ -44,6 +28,7 @@ const Overview = () => {
       changeText: "Decreased last month",
     },
     {
+      id: "new-uploads",
       title: "New Uploads",
       value: "4,250",
       change: "6.5%",
@@ -53,6 +38,7 @@ const Overview = () => {
       changeText: "Increased last month",
     },
     {
+      id: "new-users",
       title: "New Users",
       value: "2,580",
       change: "12.4%",
@@ -78,94 +64,21 @@ const Overview = () => {
     { name: "Dec", users: 7800 },
   ];
 
- 
-const dataforViewed = [
-  { category: "Fiction", views: 12000, downloads: 4000 },
-  { category: "Science", views: 8000, downloads: 3000 },
-  { category: "History", views: 9000, downloads: 3500 },
-  { category: "Technology", views: 7000, downloads: 2500 },
-];
-
-  const columns = [
-    { Header: "Id", accessor: "id" },
-    { Header: "Title", accessor: "title" },
-    { Header: "Category", accessor: "category" },
-    { Header: "Content Creator", accessor: "creator" },
-  ];
-
   return (
     <div className="space-y-6">
-      {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-        {stats.map((stat, index) => (
-          <Card key={index} className="shadow-md p-4 rounded-2xl border">
-            <CardBody className="flex items-center space-x-4">
-              {/* Icon Wrapper */}
-              <div
-                className={`w-16 h-16 flex items-center justify-center ${stat.bgColor} rounded-xl text-white`}
-              >
-                <Icon as={stat.icon} boxSize={10} />
-              </div>
-
-              {/* Stat Content */}
-              <Stat>
-                <StatLabel
-                  className="text-sm"
-                  style={{ color: Colors.smokyGray }}
-                >
-                  {stat.title}
-                </StatLabel>
-                <StatNumber className="text-xl font-bold">
-                  {stat.value}
-                </StatNumber>
-                <StatHelpText
-                  className={`text-sm flex items-center ${
-                    stat.positive ? "text-green-500" : "text-red-500"
-                  }`}
-                >
-                  <StatArrow type={stat.positive ? "increase" : "decrease"} />
-                  {stat.change} {stat.changeText}
-                </StatHelpText>
-              </Stat>
-            </CardBody>
-          </Card>
+        {stats.map((stat) => (
+          <StatCard key={stat.id} stat={stat} />
         ))}
       </div>
-
-      {/* User Growth Rate Chart */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="bg-white shadow-md p-6 rounded-xl w-full">
-          <Text
-            className="text-lg font-semibold"
-            style={{ color: Colors.smokyGray }}
-          >
-            User Growth Rate
-          </Text>
-          <Text className="text-sm text-gray-500 mb-4">
-            Tracking user engagement trends.
-          </Text>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={data}>
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="users" fill={Colors.deepAqua} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+        <UserGrowthChart data={data} />
+        <MostViewedContents/>
       </div>
-      {/* most viewed/downloaded contents */}
-      <MostViewedDownloaded/>
-      {/* Top Viewed Contents
-      <div className="bg-white shadow-md p-6 rounded-xl">
-        <Text
-          className="text-lg font-semibold mb-4"
-          style={{ color: Colors.smokyGray }}
-        >
-          Top Viewed Contents
-        </Text>
-        <Table columns={columns} data={topViewedContents} />
-      </div> */}
+      <div>
+        <RecentlyUploadedContentsTable/>
+      </div>
+      
     </div>
   );
 };

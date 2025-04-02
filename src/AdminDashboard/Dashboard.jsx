@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import Sidebar from "../Components/Dashboard/Sidebar";
+import AdminSidebar from "./AdminSidebar";
 import DashboardHeader from "../Components/Dashboard/DashboardHeader";
 import Overview from "./Overview";
 import Users from "./Users";
@@ -25,7 +25,7 @@ const Dashboard = () => {
 
   return (
     <div className="h-screen flex" style={{ backgroundColor: Colors.backgroundColor }}>
-      <Sidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} isMobile={isMobile} />
+      <AdminSidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} isMobile={isMobile} />
       
       <div className="flex-1 flex flex-col overflow-hidden">
         <DashboardHeader isMobile={isMobile} setIsSidebarOpen={setIsSidebarOpen} />

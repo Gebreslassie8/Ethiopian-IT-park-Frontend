@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Trash, Edit } from "lucide-react";
-import Table from "../Components/Table/Table";
+import Table from "../Components/table/Table";
 import Button from "../Components/Button/ReusableButton";
 import SearchFilterComponent from "../Components/SearchAndFilter/SearchFilterComponent";
+import AddContents from "../Components/Forms/AddContents";
 
 const Contents = () => {
   const [contents, setContents] = useState([
@@ -16,6 +17,20 @@ const Contents = () => {
       status: "Active",
     },
   ]);
+
+  const [isAddContentsVisible, setIsAddContentsVisible] = useState(false);
+
+  const handleAddContents = (newContent) => {
+    setContents([
+      ...contents,
+      {
+        ...newContent,
+        id: contents.length + 1,
+        createdAt: new Date().toLocaleString(),
+      },
+    ]);
+    setIsAddContentsVisible(false);
+  };
 
   const handleDelete = (id) => {
     setContents(contents.filter((content) => content.id !== id));
@@ -59,34 +74,43 @@ const Contents = () => {
       ),
     },
   ];
-  const filterOptions=[ 
-    {label:"filter by" ,value:""},
-    {label:"Actitve",value:"active"},
-   {label:"Inactive" ,value:"inactive"}
+
+  const filterOptions = [
+    { label: "filter by", value: "" },
+    { label: "Active", value: "active" },
+    { label: "Inactive", value: "inactive" },
   ];
 
   return (
     <div>
-      {/* search, filter, and add button */}
+      {/* Search, filter, and add button */}
       <div className="flex items-center justify-between mb-4">
         <SearchFilterComponent
-         searchPlaceholder="Search Contents..."
-         onSearchChange={(e)=> console.log (e.target.value)}
-         filterOptions={filterOptions}
-         onFilterChange={(e)=> console.log (e.target.value)}
-         />
+          searchPlaceholder="Search Contents..."
+          onSearchChange={(e) => console.log(e.target.value)}
+          filterOptions={filterOptions}
+          onFilterChange={(e) => console.log(e.target.value)}
+        />
 
         {/* Add Button */}
-
         <Button
           type="button"
           label="Upload Content"
           icon="Plus"
-          className="my-2 px-4 md:px-6 text-base md:text-lg gap-2 py-2"
+          className="my-2 px-4 md:px-6 text-base md:text-lg py-2"
+          onClick={() => setIsAddContentsVisible(true)}
         />
       </div>
 
       <Table columns={columns} data={contents} />
+
+      {/* Add Contents Form */}
+      {isAddContentsVisible && (
+        <AddContents
+          onAddUser={handleAddContents}
+          onClose={() => setIsAddContentsVisible(false)}
+        />
+      )}
     </div>
   );
 };

@@ -1,8 +1,9 @@
-import { Menu, LogOut } from "lucide-react";
+import { Menu ,Settings } from "lucide-react";
 import { useLocation } from "react-router-dom"; // Import the useLocation hook
 import Colors from "../../Styles/Colors";
 import profilep from "../../assets/profilep.jpg";
-import Button from "../Button/ReusableButton";
+import propTypes from "prop-types";
+import ProfileDropdown from "./ProfileDropdown";
 
 const DashboardHeader = ({ isMobile, setIsSidebarOpen }) => {
   const location = useLocation(); // Get the current location for the header title
@@ -12,8 +13,8 @@ const DashboardHeader = ({ isMobile, setIsSidebarOpen }) => {
     <div className="w-full h-20 bg-white flex items-center px-6 shadow-md">
       {isMobile && (
         <button
-          className="mr-4 p-2 hover:bg-gray-200 rounded-xl"
-          style={{ color: Colors.smokyGray }}
+          className="mr-4 p-2 rounded-xl"
+          style={{ color: Colors.smokyGray,hoverBackgroundColor:Colors.lightTeal }}
           onClick={() => setIsSidebarOpen((prev) => !prev)}
         >
           <Menu size={24} />
@@ -28,12 +29,17 @@ const DashboardHeader = ({ isMobile, setIsSidebarOpen }) => {
       </h2>
 
       <div className="ml-auto flex items-center gap-4">
-        <img
+         {/* Add Settings Icon */}
+         <button className="p-2 text-gray-700 hover:text-gray-900">
+            <Settings size={24} />
+          </button>
+          <ProfileDropdown/>
+        {/* <img
           src={profilep}
           alt="Profile"
           className="w-[50px] h-[50px] rounded-full object-cover"
         />
-        {/* <Button
+        <Button
           type="button"
           label="Log Out"
           icon="LogOut"
@@ -42,6 +48,10 @@ const DashboardHeader = ({ isMobile, setIsSidebarOpen }) => {
       </div>
     </div>
   );
+};
+DashboardHeader.propTypes = {
+  isMobile: propTypes.bool.isRequied,
+  setIsSidebarOpen: propTypes.func.isRequied,
 };
 
 export default DashboardHeader;

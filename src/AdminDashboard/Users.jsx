@@ -1,13 +1,13 @@
 
 import { useState } from "react";
 import { Trash, Edit } from "lucide-react";
-import Table from "../Components/Table/Table";
+import Table from "../Components/table/Table";
 import Button from "../Components/Button/ReusableButton";
 import SearchFilterComponent from "../Components/SearchAndFilter/SearchFilterComponent";
 import AddUserForm from "../Components/Forms/AddNewUser";
 
 const Users = () => {
-  const [users] = useState([
+  const [users,setUsers] = useState([
     {
       id: 1,
       username: "Sara Mohammed",
@@ -20,7 +20,7 @@ const Users = () => {
   const [showAddUserForm, setShowAddUserForm] = useState(false);
 
   const handleDelete = (id) => {
-    console.log(`Delete user with id: ${id}`);
+    setUsers(users.filter((user) => user.id !== id));
   };
   const handleAddUser = (newUser) => {
     setUsers([...users, { ...newUser, id: users.length + 1, createdAt: new Date().toLocaleString() }]);
@@ -84,13 +84,13 @@ const Users = () => {
             type="button"
             label="Add User"
             icon="Plus"
-            className="my-2 px-4 md:px-6 text-base md:text-lg gap-2 py-2"
+            className="my-2 px-4 md:px-6 text-base md:text-lg py-2"
             onClick={()=> setShowAddUserForm(true)}
           />
            {showAddUserForm && (
         <AddUserForm
           onAddUser={handleAddUser}
-          onCancel={() => setShowAddUserForm(false)}
+          onClose={() => setShowAddUserForm(false)}
         />
       )}
       </div>
