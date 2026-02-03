@@ -13,8 +13,10 @@ const Colors = {
     mediumGray:"#A0A0A0",//for showpassword icon
     lightTeal:"#6FCCC2",
     deepBlueShade:"#A3B8D1",
+    deepBlueHover: "#1E3A8A",
     lightTealShade:"#D1F2EE",
-    red:"#EF4444"
+    red:"#EF4444",
+    softGray:"#e5e5e5" //for header
   };
   
   export default Colors;

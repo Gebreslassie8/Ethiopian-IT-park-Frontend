@@ -1,16 +1,46 @@
-import React from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import ReusablePieChart from "../ReusableChart/ReusablePieChart";
+import Colors from "../../Styles/Colors";
 
-const data = [
-  { category: "Technology", views: 2500 },
-  { category: "Science", views: 1800 },
-  { category: "History", views: 1200 },
-  { category: "Art", views: 900 },
+const COLORS = [
+  Colors.deepBlue,
+  Colors.deepTeal,
+  Colors.skyTeal,
+  Colors.lightTeal,
+  Colors.red,
 ];
 
-const COLORS = ["#4F46E5", "#22C55E", "#EAB308", "#F43F5E"];
-
 const MostViewedContents = () => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true); 
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchMostViewed = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get("http://localhost:3000/api/most-viewed", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setData(response.data);
+      } catch (err) {
+        console.error("Failed to fetch most viewed contents:", err);
+        setError("Failed to load data.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMostViewed();
+  }, []);
+
+  if (loading) return <p>Loading most viewed contents...</p>;
+  if (error) return <p>{error}</p>;
+  if (data.length === 0) return <p>No data available for most viewed categories.</p>;
+
   return (
     <ReusablePieChart
       title="Most Viewed Categories"

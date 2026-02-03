@@ -1,34 +1,34 @@
-import React from "react";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import ReusablePieChart from "../ReusableChart/ReusablePieChart";
 import Colors from "../../Styles/Colors";
+import PropTypes from "prop-types";
 
-const timeSpentData = [
-  { day: "Mon", minutes: 30 },
-  { day: "Tue", minutes: 45 },
-  { day: "Wed", minutes: 20 },
-  { day: "Thu", minutes: 60 },
-  { day: "Fri", minutes: 50 },
-  { day: "Sat", minutes: 40 },
-  { day: "Sun", minutes: 30 },
-];
+const COLORS = [Colors.deepTeal, Colors.deepBlue, Colors.deepAqua, Colors.skyTeal];
 
-const TimeSpentChart = () => (
-  <div className="flex-1 min-w-full md:min-w-[50%] bg-white shadow-lg rounded-xl p-4">
-    <h3 className="text-lg font-medium text-gray-700 mb-4">Time Spent on Resources</h3>
-    <ResponsiveContainer width="100%" height={300}>
-      <LineChart data={timeSpentData}>
-        <XAxis dataKey="day" />
-        <YAxis />
-        <Tooltip />
-        <Line
-          type="monotone"
+const TimeSpentChart = ({ data }) => {
+  return (
+    <div className="flex-1 w-full bg-white shadow-lg rounded-xl p-4">
+      {data?.length ? (
+        <ReusablePieChart
+          title="Time Spent on Resource Categories per minutes"
+          data={data}
           dataKey="minutes"
-          stroke={Colors.deepTeal}
-          strokeWidth={3}
+          nameKey="category"
+          colors={COLORS}
+          outerRadius={100}
         />
-      </LineChart>
-    </ResponsiveContainer>
-  </div>
-);
+      ) : (
+        <p className="text-sm text-gray-500">No data available.</p>
+      )}
+    </div>
+  );
+};
+TimeSpentChart.propTypes = {
+  data: PropTypes.arrayOf(
+    PropTypes.shape({
+      minutes: PropTypes.number.isRequired,
+      category: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+};
 
 export default TimeSpentChart;

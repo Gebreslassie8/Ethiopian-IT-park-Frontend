@@ -1,63 +1,111 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import PropTypes from "prop-types";
 import { User, Settings, Bell, LogOut } from "lucide-react";
-import profilep from "../../assets/profilep.jpg";
+import { useNavigate } from "react-router-dom";
+import { useProfile } from "../../Context/ProfileContext";
 
-const ProfileDropdown = () => {
-  const [open, setOpen] = useState(false);
+const ProfileDropdown = ({
+  onOpenProfile,
+  onOpenNotification,
+  onOpenSettings,
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  const { user, profilePictureUpdatedAt } = useProfile();
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/");
+  };
+
+  const handleAction = (callback, fallbackRoute) => {
+    setIsOpen(false);
+    callback ? callback() : navigate(fallbackRoute);
+  };
+  const fileName = user?.profile_picture?.split("/").pop();
+  const profileImage = fileName
+    ? `http://localhost:3000/api/files/profile-picture/${fileName}?t=${profilePictureUpdatedAt}`
+    : "/default-avatar.png";
 
   return (
-    <div className="relative">
-      {/* Profile Trigger Button */}
+    <div className="relative inline-block">
       <button
-        onClick={() => setOpen(!open)}
-        className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100"
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center p-2 rounded-full hover:ring-2 hover:ring-gray-200 transition"
       >
         <img
-          src={profilep}
-          alt="Profile"
-          className="w-[40px] h-[40px] md:w-[50px] md:h-[50px] rounded-full object-cover"
+          src={profileImage}
+          alt="User Avatar"
+          className="w-10 h-10 rounded-full object-cover"
         />
       </button>
 
-      {/* Dropdown Menu */}
-      {open && (
-        <div className="absolute right-0 mt-2 w-56 md:w-64 lg:w-80 bg-white shadow-lg rounded-xl p-4 z-50">
-          {/* Profile Info */}
-          <div className="flex items-center space-x-3 border-b pb-3">
+      {isOpen && user && (
+        <div className="absolute right-0 mt-2 w-64 bg-white shadow-xl rounded-xl p-4 z-50">
+          <div className="flex items-center gap-3 border-b pb-3">
             <img
-              src={profilep}
-              alt="Profile"
-              className="w-[40px] h-[40px] md:w-[50px] md:h-[50px] rounded-full object-cover"
+              src={profileImage}
+              alt="User"
+              className="w-10 h-10 rounded-full"
             />
             <div>
-              <p className="font-medium text-gray-900 text-base md:text-lg">Samrawit</p>
-              <p className="text-sm md:text-base text-gray-500">samrawit@gmail.com</p>
+              <p className="font-semibold text-gray-900">{user.username}</p>
+              <p className="text-sm text-gray-500">{user.email}</p>
             </div>
           </div>
 
-          {/* Menu Items */}
-          <ul className="mt-3 space-y-2">
-            <li className="flex items-center p-2 md:p-3 rounded-lg hover:bg-gray-100 cursor-pointer">
-              <User className="w-5 h-5 md:w-6 md:h-6 text-gray-600" />
-              <span className="ml-3 text-sm md:text-base">My Profile</span>
-            </li>
-            <li className="flex items-center p-2 md:p-3 rounded-lg hover:bg-gray-100 cursor-pointer">
-              <Settings className="w-5 h-5 md:w-6 md:h-6 text-gray-600" />
-              <span className="ml-3 text-sm md:text-base">Settings</span>
-            </li>
-            <li className="flex items-center p-2 md:p-3 rounded-lg hover:bg-gray-100 cursor-pointer">
-              <Bell className="w-5 h-5 md:w-6 md:h-6 text-gray-600" />
-              <span className="ml-3 text-sm md:text-base">Notifications</span>
-            </li>
-            <li className="flex items-center p-2 md:p-3 rounded-lg hover:bg-red-100 text-red-600 cursor-pointer">
-              <LogOut className="w-5 h-5 md:w-6 md:h-6" />
-              <span className="ml-3 text-sm md:text-base">Log Out</span>
-            </li>
+          <ul className="mt-4 space-y-2">
+            <DropdownItem
+              icon={<User />}
+              label="My Profile"
+              onClick={() => handleAction(onOpenProfile)}
+            />
+            <DropdownItem
+              icon={<Settings />}
+              label="Settings"
+              onClick={() => handleAction(onOpenSettings)}
+            />
+            <DropdownItem
+              icon={<Bell />}
+              label="Notifications"
+              onClick={() => handleAction(onOpenNotification)}
+            />
+            <DropdownItem
+              icon={<LogOut />}
+              label="Log Out"
+              onClick={handleLogout}
+              isDanger
+            />
           </ul>
         </div>
       )}
     </div>
   );
+};
+
+const DropdownItem = ({ icon, label, onClick, isDanger = false }) => (
+  <li
+    onClick={onClick}
+    className={`flex items-center gap-3 p-2 rounded cursor-pointer transition ${
+      isDanger ? "text-red-600 hover:bg-red-100" : "hover:bg-gray-100"
+    }`}
+  >
+    {icon}
+    <span className="text-sm">{label}</span>
+  </li>
+);
+
+ProfileDropdown.propTypes = {
+  onOpenProfile: PropTypes.func,
+  onOpenNotification: PropTypes.func,
+  onOpenSettings: PropTypes.func,
+};
+
+DropdownItem.propTypes = {
+  icon: PropTypes.node.isRequired,
+  label: PropTypes.string.isRequired,
+  onClick: PropTypes.func.isRequired,
+  isDanger: PropTypes.bool,
 };
 
 export default ProfileDropdown;

@@ -1,0 +1,41 @@
+.form-field {
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
+
+  .form-field input,
+  .form-field select {
+    width: 100%;
+    padding: 0.5rem 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    background-color: #eceef1;
+    color: #908A8A;
+    transition: border-color 0.3s;
+  }
+
+  .form-field label {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    color: #6C6A6A;
+    pointer-events: none;
+    transition: all 0.3s ease;
+  }
+
+  .form-field input:focus,
+  .form-field select:focus {
+    border-color: #007590;
+  }
+
+  .form-field input:focus + label,
+  .form-field select:focus + label,
+  .form-field input:not(:placeholder-shown) + label,
+  .form-field select:not(:placeholder-shown) + label {
+    top: -0.5rem;
+    left: 0.5rem;
+    font-size: 0.8rem;
+    color: #007590;
+    background-color: #ffffff;
+    padding: 0 0.25rem;
+  }
