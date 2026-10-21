@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
   import ReusableForm from "../Forms/ReusableForm";
   import Button from "../Button/ReusableButton";
   import Colors from "../../Styles/Colors";
-  import contentValidationSchema from "../../../../Shared/ValidationSchema/contentValidationSchema";
+  import contentValidationSchema from "../../Shared/ValidationSchema/contentValidationSchema";
 
   const AddContents = ({
     onClose,

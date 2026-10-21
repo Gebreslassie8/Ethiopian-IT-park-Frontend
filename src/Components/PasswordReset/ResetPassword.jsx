@@ -3,7 +3,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Colors from "../../Styles/Colors";
 import Button from "../../Components/Button/ReusableButton";
-import ResetPasswordValidationSchema from "../../../../Shared/ValidationSchema/ResetPasswordValidationSchema";
+import ResetPasswordValidationSchema from "../../Shared/ValidationSchema/ResetPasswordValidationSchema";
 
 const ResetPassword = () => {
   const { state } = useLocation();

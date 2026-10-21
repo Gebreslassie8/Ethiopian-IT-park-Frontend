@@ -5,7 +5,7 @@ import Colors from "./Styles/Colors";
 import ReusableForm from "./Components/Forms/ReusableForm";
 import Button from "./Components/Button/ReusableButton";
 import { Eye, EyeOff } from "lucide-react";
-import LoginValidationSchema from "../../Shared/ValidationSchema/LoginValidationSchema";
+import LoginValidationSchema from "./Shared/ValidationSchema/LoginValidationSchema";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);

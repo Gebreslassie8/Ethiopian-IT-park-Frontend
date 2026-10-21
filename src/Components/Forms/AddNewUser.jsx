@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
 import ReusableForm from "./ReusableForm";
-import ValidationSchema from "../../../../Shared/ValidationSchema/UserValidationSchema";
+import ValidationSchema from "../../Shared/ValidationSchema/UserValidationSchema";
 import Button from "../Button/ReusableButton";
 import Colors from "../../Styles/Colors";
 import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import eye icons

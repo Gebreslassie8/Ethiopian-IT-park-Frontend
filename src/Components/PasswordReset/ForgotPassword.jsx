@@ -3,7 +3,7 @@ import { FiMail } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom"; // <-- import useNavigate
 import Colors from "../../Styles/Colors";
 import Button from "../../Components/Button/ReusableButton";
-import ForgotPasswordValidationSchema from "../../../../Shared/ValidationSchema/ForgotPasswordSchema";
+import ForgotPasswordValidationSchema from "../../Shared/ValidationSchema/ForgotPasswordSchema";
 
 const ForgotPassword = () => {
   const navigate = useNavigate(); // <-- initialize navigate
