@@ -32,7 +32,7 @@ const Login = () => {
     setErrorMessage(null);
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/users/login`, values);
+      const response = await axios.post(`https://ethiopian-it-park-backend.onrender.com/api/users/login`, values);
       const { token, user } = response.data;
 
       localStorage.setItem("user", JSON.stringify(user));

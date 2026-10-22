@@ -19,7 +19,7 @@ const ContentManagerOverview = () => {
   useEffect(() => {
     const fetchOverview = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/content-manager/summary`);
+        const res = await axios.get(`https://ethiopian-it-park-backend.onrender.com/api/content-manager/summary`);
         const summaryStats = statCardsConfig.map((config) => {
           const changeValue = res.data[`${config.id}Change`];
           let changeText = res.data[`${config.id}ChangeText`] || "No change last month";

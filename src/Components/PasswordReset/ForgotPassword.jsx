@@ -37,7 +37,7 @@ const ForgotPassword = () => {
       setMessage("");
       setError("");
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/forgot-password`, {
+        const res = await fetch(`https://ethiopian-it-park-backend.onrender.com/api/forgot-password`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email: values.email }),

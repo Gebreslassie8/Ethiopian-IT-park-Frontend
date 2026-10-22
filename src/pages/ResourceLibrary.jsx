@@ -16,7 +16,7 @@ export default function ExternalLibrary() {
   useEffect(() => {
     const fetchTabs = async () => {
       try {
-        const resTabs = await axios.get(`${import.meta.env.VITE_API_URL}/api/tabs`);
+        const resTabs = await axios.get(`https://ethiopian-it-park-backend.onrender.com/api/tabs`);
         const allTabs = Array.isArray(resTabs.data) ? resTabs.data : [];
 
         setAllCategories(allTabs);
@@ -49,7 +49,7 @@ export default function ExternalLibrary() {
     const fetchFilteredResources = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/search`, {
+        const res = await axios.get(`https://ethiopian-it-park-backend.onrender.com/api/search`, {
           params: {
             search: searchTerm,
             category: getCategoryQuery(activeTab),
@@ -60,7 +60,7 @@ export default function ExternalLibrary() {
 
         // Fetch related only if we have results
         if (res.data.length > 0) {
-          const relatedRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/related`, {
+          const relatedRes = await axios.get(`https://ethiopian-it-park-backend.onrender.com/api/related`, {
             params: { for: res.data[0].content_id },
           });
           setRelatedContents(relatedRes.data);

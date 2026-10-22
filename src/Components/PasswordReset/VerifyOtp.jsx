@@ -45,7 +45,7 @@ const VerifyOtp = ({ onOtpVerified }) => {
     }
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/verify-otp`, {
+      const res = await fetch(`https://ethiopian-it-park-backend.onrender.com/api/verify-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp: values.otp }),
@@ -79,7 +79,7 @@ const VerifyOtp = ({ onOtpVerified }) => {
     }
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/resend-otp`, {
+      const res = await fetch(`https://ethiopian-it-park-backend.onrender.com/api/resend-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),

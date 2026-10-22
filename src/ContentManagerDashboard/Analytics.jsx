@@ -25,10 +25,10 @@ const ContentManagerAnalytics = () => {
           frequentRes,
           underutilizedRes,
         ] = await Promise.all([
-          axios.get(`${import.meta.env.VITE_API_URL}/api/analytics/monthly`),
-          axios.get(`${import.meta.env.VITE_API_URL}/api/analytics/time-spent`),
-          axios.get(`${import.meta.env.VITE_API_URL}/api/analytics/frequently-accessed`),
-          axios.get(`${import.meta.env.VITE_API_URL}/api/analytics/underutilized`),
+          axios.get(`https://ethiopian-it-park-backend.onrender.com/api/analytics/monthly`),
+          axios.get(`https://ethiopian-it-park-backend.onrender.com/api/analytics/time-spent`),
+          axios.get(`https://ethiopian-it-park-backend.onrender.com/api/analytics/frequently-accessed`),
+          axios.get(`https://ethiopian-it-park-backend.onrender.com/api/analytics/underutilized`),
         ]);
 
         setActivityData(activityRes.data);

@@ -18,7 +18,7 @@ export default function InternalLibrary() {
   useEffect(() => {
     const fetchTabs = async () => {
       try {
-        const resTabs = await axios.get(`${import.meta.env.VITE_API_URL}/api/tabs`);
+        const resTabs = await axios.get(`https://ethiopian-it-park-backend.onrender.com/api/tabs`);
         const allTabs = Array.isArray(resTabs.data) ? resTabs.data : [];
 
         setAllCategories(allTabs);
@@ -52,7 +52,7 @@ export default function InternalLibrary() {
       try {
         setLoading(true);
 
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/search`, {
+        const res = await axios.get(`https://ethiopian-it-park-backend.onrender.com/api/search`, {
           params: {
             search: searchTerm,
             category: getCategoryQuery(activeTab),
@@ -66,7 +66,7 @@ export default function InternalLibrary() {
 
         if (res.data.length > 0) {
           const relatedRes = await axios.get(
-            `${import.meta.env.VITE_API_URL}/api/related/internal`,
+            `https://ethiopian-it-park-backend.onrender.com/api/related/internal`,
             {
               params: { for: res.data[0].content_id },
               headers: { Authorization: `Bearer ${token}` },

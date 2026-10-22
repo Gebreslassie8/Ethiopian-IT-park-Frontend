@@ -25,7 +25,7 @@ const ContentManagerReport = () => {
       setLoading(true);
       setError(null);
       try {
-        const url = `${import.meta.env.VITE_API_URL}/api/cm-reports/${reportType}?page=${currentPage}&limit=${itemsPerPage}`;
+        const url = `https://ethiopian-it-park-backend.onrender.com/api/cm-reports/${reportType}?page=${currentPage}&limit=${itemsPerPage}`;
         const response = await fetch(url, {
           method: 'GET',
           headers: {

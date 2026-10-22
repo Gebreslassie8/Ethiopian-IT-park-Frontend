@@ -19,8 +19,8 @@ const Overview = () => {
  useEffect(() => {
   const fetchOverview = async () => {
     const [summaryRes, recentRes] = await Promise.all([
-      axios.get(`${import.meta.env.VITE_API_URL}/api/overview/summary`),
-      axios.get(`${import.meta.env.VITE_API_URL}/api/overview/recent`),
+      axios.get(`https://ethiopian-it-park-backend.onrender.com/api/overview/summary`),
+      axios.get(`https://ethiopian-it-park-backend.onrender.com/api/overview/recent`),
     ]);
 
     const summaryStats = statCardsConfig.map((config) => {

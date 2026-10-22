@@ -27,11 +27,11 @@ const Analytics = () => {
           activityRes,
           activeUsersRes,
         ] = await Promise.all([
-          axios.get(`${import.meta.env.VITE_API_URL}/api/analytics/frequently-accessed`),
-          axios.get(`${import.meta.env.VITE_API_URL}/api/analytics/underutilized`),
-          // axios.get(`${import.meta.env.VITE_API_URL}/api/analytics/time-spent`),
-          axios.get(`${import.meta.env.VITE_API_URL}/api/analytics/monthly`),
-          axios.get(`${import.meta.env.VITE_API_URL}/api/analytics/active-users`),
+          axios.get(`https://ethiopian-it-park-backend.onrender.com/api/analytics/frequently-accessed`),
+          axios.get(`https://ethiopian-it-park-backend.onrender.com/api/analytics/underutilized`),
+          // axios.get(`https://ethiopian-it-park-backend.onrender.com/api/analytics/time-spent`),
+          axios.get(`https://ethiopian-it-park-backend.onrender.com/api/analytics/monthly`),
+          axios.get(`https://ethiopian-it-park-backend.onrender.com/api/analytics/active-users`),
         ]);
 
         setFrequentResources(frequentRes.data);

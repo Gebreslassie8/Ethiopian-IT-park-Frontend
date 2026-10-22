@@ -25,7 +25,7 @@ const GenerateReport = () => {
         const endpoint = endpointMap[reportType] || reportType;
         
         const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/admin-reports/${endpoint}?page=${page}&limit=${limit}`,
+          `https://ethiopian-it-park-backend.onrender.com/api/admin-reports/${endpoint}?page=${page}&limit=${limit}`,
           {
             headers: {
               Authorization: `Bearer ${token || ''}`,

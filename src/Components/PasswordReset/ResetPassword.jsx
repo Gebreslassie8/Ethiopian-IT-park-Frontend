@@ -55,7 +55,7 @@ const ResetPassword = () => {
     if (Object.keys(validationErrors).length > 0) return;
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/reset-password`, {
+      const res = await fetch(`https://ethiopian-it-park-backend.onrender.com/api/reset-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, newPassword: values.password }),

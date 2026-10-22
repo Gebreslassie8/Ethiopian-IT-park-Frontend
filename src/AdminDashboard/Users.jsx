@@ -23,7 +23,7 @@ const Users = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/filter`, {
+      const response = await axios.get(`https://ethiopian-it-park-backend.onrender.com/api/users/filter`, {
         params: {
           search: searchTerm,
           status: filterValue,
@@ -70,7 +70,7 @@ const Users = () => {
 
     try {
       const response = await axios.delete(
-        `${import.meta.env.VITE_API_URL}/api/users/delete/${pendingDeleteUserId}`
+        `https://ethiopian-it-park-backend.onrender.com/api/users/delete/${pendingDeleteUserId}`
       );
       if (response.status === 200) {
         setUsers(users.filter((user) => user.user_id !== pendingDeleteUserId));
@@ -96,7 +96,7 @@ const Users = () => {
         role: values.role,
       };
 
-      await axios.post(`${import.meta.env.VITE_API_URL}/api/users/register`, payload);
+      await axios.post(`https://ethiopian-it-park-backend.onrender.com/api/users/register`, payload);
       await fetchUsers();
       resetForm();
       setShowAddUserForm(false);
@@ -110,7 +110,7 @@ const Users = () => {
     try {
       const payload = { ...values };
       await axios.put(
-        `${import.meta.env.VITE_API_URL}/api/users/edit/${editingUser.user_id}`,
+        `https://ethiopian-it-park-backend.onrender.com/api/users/edit/${editingUser.user_id}`,
         payload
       );
       await fetchUsers();

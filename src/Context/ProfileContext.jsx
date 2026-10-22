@@ -15,7 +15,7 @@ export const ProfileProvider = ({ children }) => {
       const token = localStorage.getItem("token");
       if (!token) return;
 
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/profile`, {
+      const res = await axios.get(`https://ethiopian-it-park-backend.onrender.com/api/users/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
