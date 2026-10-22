@@ -20,7 +20,7 @@ const MostViewedContents = () => {
     const fetchMostViewed = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:3000/api/most-viewed", {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/most-viewed`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

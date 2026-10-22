@@ -23,7 +23,7 @@ const Users = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/users/filter", {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/filter`, {
         params: {
           search: searchTerm,
           status: filterValue,
@@ -70,7 +70,7 @@ const Users = () => {
 
     try {
       const response = await axios.delete(
-        `http://localhost:3000/api/users/delete/${pendingDeleteUserId}`
+        `${import.meta.env.VITE_API_URL}/api/users/delete/${pendingDeleteUserId}`
       );
       if (response.status === 200) {
         setUsers(users.filter((user) => user.user_id !== pendingDeleteUserId));
@@ -96,7 +96,7 @@ const Users = () => {
         role: values.role,
       };
 
-      await axios.post("http://localhost:3000/api/users/register", payload);
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/users/register`, payload);
       await fetchUsers();
       resetForm();
       setShowAddUserForm(false);
@@ -110,7 +110,7 @@ const Users = () => {
     try {
       const payload = { ...values };
       await axios.put(
-        `http://localhost:3000/api/users/edit/${editingUser.user_id}`,
+        `${import.meta.env.VITE_API_URL}/api/users/edit/${editingUser.user_id}`,
         payload
       );
       await fetchUsers();

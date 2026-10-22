@@ -57,8 +57,8 @@ const Contents = () => {
   try {
     const endpoint =
       activeTab === "Archived"
-        ? "http://localhost:3000/api/archived"
-        : "http://localhost:3000/api/search";
+        ? `${import.meta.env.VITE_API_URL}/api/archived`
+        : `${import.meta.env.VITE_API_URL}/api/search`;
 
     const response = await axios.get(endpoint, {
       headers: { Authorization: `Bearer ${token}` },
@@ -112,7 +112,7 @@ const Contents = () => {
   const handleEdit = async (content) => {
     try {
       const { data } = await axios.get(
-        `http://localhost:3000/api/edit/${content.content_id}`,
+        `${import.meta.env.VITE_API_URL}/api/edit/${content.content_id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -172,7 +172,7 @@ const Contents = () => {
 
       if (editContentId) {
         await axios.put(
-          `http://localhost:3000/api/edit/${editContentId}`,
+          `${import.meta.env.VITE_API_URL}/api/edit/${editContentId}`,
           formData,
           config
         );
@@ -184,7 +184,7 @@ const Contents = () => {
           isClosable: true,
         });
       } else {
-        await axios.post("http://localhost:3000/api/upload", formData, config);
+        await axios.post(`${import.meta.env.VITE_API_URL}/api/upload`, formData, config);
         toast({
           title: "Content uploaded.",
           description: "Content uploaded successfully.",
@@ -214,8 +214,8 @@ const Contents = () => {
   const handleArchiveToggle = async (content_id) => {
     const isArchived = activeTab === "Archived";
     const endpoint = isArchived
-      ? `http://localhost:3000/api/restore/${content_id}`
-      : `http://localhost:3000/api/archive/${content_id}`;
+      ? `${import.meta.env.VITE_API_URL}/api/restore/${content_id}`
+      : `${import.meta.env.VITE_API_URL}/api/archive/${content_id}`;
     try {
       await axios.patch(endpoint, null, {
         headers: { Authorization: `Bearer ${token}` },
@@ -252,7 +252,7 @@ const Contents = () => {
     setIsDeleting(true);
     try {
       await axios.delete(
-        `http://localhost:3000/api/delete/${contentToDelete}`,
+        `${import.meta.env.VITE_API_URL}/api/delete/${contentToDelete}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

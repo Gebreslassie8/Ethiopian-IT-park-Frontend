@@ -29,7 +29,7 @@ const LibraryLayout = ({
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:3000/api/${contentId}/view`,
+        `${import.meta.env.VITE_API_URL}/api/${contentId}/view`,
         {
           method: "GET",
           headers: {
@@ -50,7 +50,7 @@ const LibraryLayout = ({
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:3000/api/${contentId}/download`,
+        `${import.meta.env.VITE_API_URL}/api/${contentId}/download`,
         {
           method: "GET",
           headers: {
@@ -92,13 +92,13 @@ const LibraryLayout = ({
                 res.preview_path
                   ? res.preview_path.startsWith("http")
                     ? res.preview_path
-                    : `http://localhost:3000/api/files/preview/${res.preview_path
+                    : `${import.meta.env.VITE_API_URL}/api/files/preview/${res.preview_path
                         .split(/[\\/]/)
                         .pop()}`
                   : defaultImage
               }
               previewType={res.preview_type}
-              download={`http://localhost:3000/${res.file_url}`}
+              download={`${import.meta.env.VITE_API_URL}/${res.file_url}`}
               views={res.view_count || res.views || 0}
               downloads={res.download_count || res.downloads || 0}
               file_format={res.file_format}
@@ -279,7 +279,7 @@ export default LibraryLayout;
 //     try {
 //       const token = localStorage.getItem("token");
 //       const response = await fetch(
-//         `http://localhost:3000/api/${contentId}/view`,
+//         `${import.meta.env.VITE_API_URL}/api/${contentId}/view`,
 //         {
 //           method: "GET",
 //           headers: {
@@ -300,7 +300,7 @@ export default LibraryLayout;
 //     try {
 //       const token = localStorage.getItem("token");
 //       const response = await fetch(
-//         `http://localhost:3000/api/${contentId}/download`,
+//         `${import.meta.env.VITE_API_URL}/api/${contentId}/download`,
 //         {
 //           method: "GET",
 //           headers: {
@@ -341,13 +341,13 @@ export default LibraryLayout;
 //                 res.preview_path
 //                   ? res.preview_path.startsWith("http")
 //                     ? res.preview_path
-//                     : `http://localhost:3000/api/files/preview/${res.preview_path
+//                     : `${import.meta.env.VITE_API_URL}/api/files/preview/${res.preview_path
 //                         .split(/[\\/]/)
 //                         .pop()}`
 //                   : defaultImage
 //               }
 //               previewType={res.preview_type}
-//               download={`http://localhost:3000/${res.file_url}`}
+//               download={`${import.meta.env.VITE_API_URL}/${res.file_url}`}
 //               views={res.view_count || res.views || 0}
 //               downloads={res.download_count || res.downloads || 0}
 //               file_format={res.file_format}

@@ -19,8 +19,8 @@ const Overview = () => {
  useEffect(() => {
   const fetchOverview = async () => {
     const [summaryRes, recentRes] = await Promise.all([
-      axios.get("http://localhost:3000/api/overview/summary"),
-      axios.get("http://localhost:3000/api/overview/recent"),
+      axios.get(`${import.meta.env.VITE_API_URL}/api/overview/summary`),
+      axios.get(`${import.meta.env.VITE_API_URL}/api/overview/recent`),
     ]);
 
     const summaryStats = statCardsConfig.map((config) => {

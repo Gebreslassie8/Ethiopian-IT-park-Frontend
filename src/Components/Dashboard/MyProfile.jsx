@@ -29,7 +29,7 @@ const MyProfile = ({ onClose }) => {
 
   const fileName = user?.profile_picture?.split("/").pop();
   const preview = fileName
-    ? `http://localhost:3000/api/files/profile-picture/${fileName}?t=${profilePictureUpdatedAt}`
+    ? `${import.meta.env.VITE_API_URL}/api/files/profile-picture/${fileName}?t=${profilePictureUpdatedAt}`
     : "";
 
   const handleEditIconClick = () => fileInputRef.current?.click();
@@ -52,7 +52,7 @@ const MyProfile = ({ onClose }) => {
       const form = new FormData();
       form.append("profileImage", file);
 
-      const res = await axios.put("http://localhost:3000/api/users/profile-picture", form, {
+      const res = await axios.put(`${import.meta.env.VITE_API_URL}/api/users/profile-picture`, form, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -90,7 +90,7 @@ const MyProfile = ({ onClose }) => {
       const token = localStorage.getItem("token");
       const payload = { username: formData.username, email: formData.email };
 
-      const res = await axios.put("http://localhost:3000/api/users/profile", payload, {
+      const res = await axios.put(`${import.meta.env.VITE_API_URL}/api/users/profile`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

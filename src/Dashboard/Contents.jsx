@@ -51,8 +51,8 @@ const Contents = ({ role }) => {
     try {
       const isFiltering = query && field && field !== "all";
       const url = isFiltering
-        ? "http://localhost:3000/api/search"
-        : "http://localhost:3000/api/contents";
+        ? `${import.meta.env.VITE_API_URL}/api/search`
+        : `${import.meta.env.VITE_API_URL}/api/contents`;
 
       const response = isFiltering
         ? await axios.get(url, { params: { field, query } })
@@ -82,7 +82,7 @@ const Contents = ({ role }) => {
 
   const handleEdit = async (content) => {
     try {
-      const { data } = await axios.get(`http://localhost:3000/api/edit/${content.content_id}`);
+      const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/edit/${content.content_id}`);
       setEditContentId(data.content_id);
       setFormValues({
         title: data.title,
@@ -130,7 +130,7 @@ const Contents = ({ role }) => {
       }
 
       if (editContentId) {
-        await axios.put(`http://localhost:3000/api/edit/${editContentId}`, formData, {
+        await axios.put(`${import.meta.env.VITE_API_URL}/api/edit/${editContentId}`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         toast({
@@ -141,7 +141,7 @@ const Contents = ({ role }) => {
           isClosable: true,
         });
       } else {
-        await axios.post("http://localhost:3000/api/upload", formData, {
+        await axios.post(`${import.meta.env.VITE_API_URL}/api/upload`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         toast({
@@ -267,7 +267,7 @@ const Contents = ({ role }) => {
         onClose={() => setIsModalOpen(false)}
         onConfirm={async () => {
           try {
-            await axios.delete(`http://localhost:3000/api/delete/${contentToDelete}`);
+            await axios.delete(`${import.meta.env.VITE_API_URL}/api/delete/${contentToDelete}`);
             toast({
               title: "Content deleted.",
               description: "The content has been deleted successfully.",

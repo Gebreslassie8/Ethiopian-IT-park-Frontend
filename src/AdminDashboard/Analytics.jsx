@@ -27,11 +27,11 @@ const Analytics = () => {
           activityRes,
           activeUsersRes,
         ] = await Promise.all([
-          axios.get("http://localhost:3000/api/analytics/frequently-accessed"),
-          axios.get("http://localhost:3000/api/analytics/underutilized"),
-          // axios.get("http://localhost:3000/api/analytics/time-spent"),
-          axios.get("http://localhost:3000/api/analytics/monthly"),
-          axios.get("http://localhost:3000/api/analytics/active-users"),
+          axios.get(`${import.meta.env.VITE_API_URL}/api/analytics/frequently-accessed`),
+          axios.get(`${import.meta.env.VITE_API_URL}/api/analytics/underutilized`),
+          // axios.get(`${import.meta.env.VITE_API_URL}/api/analytics/time-spent`),
+          axios.get(`${import.meta.env.VITE_API_URL}/api/analytics/monthly`),
+          axios.get(`${import.meta.env.VITE_API_URL}/api/analytics/active-users`),
         ]);
 
         setFrequentResources(frequentRes.data);

@@ -25,7 +25,7 @@ const ContentManagerReport = () => {
       setLoading(true);
       setError(null);
       try {
-        const url = `http://localhost:3000/api/cm-reports/${reportType}?page=${currentPage}&limit=${itemsPerPage}`;
+        const url = `${import.meta.env.VITE_API_URL}/api/cm-reports/${reportType}?page=${currentPage}&limit=${itemsPerPage}`;
         const response = await fetch(url, {
           method: 'GET',
           headers: {

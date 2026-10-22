@@ -18,7 +18,7 @@ const DashboardHeader = ({
 
 const fileName = user?.profile_picture?.split("/").pop();
 const profilePic = fileName
-  ? `http://localhost:3000/api/files/profile-picture/${fileName}?t=${profilePictureUpdatedAt}`
+  ? `${import.meta.env.VITE_API_URL}/api/files/profile-picture/${fileName}?t=${profilePictureUpdatedAt}`
   : "/default-avatar.png";
 
 
