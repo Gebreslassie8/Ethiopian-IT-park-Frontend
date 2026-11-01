@@ -8,6 +8,8 @@ import SearchFilterComponent from "../Components/SearchAndFilter/SearchFilterCom
 import AddUserForm from "../Components/Forms/AddNewUser";
 import ReusableModal from "../Components/Modals/ReusableModal";
 
+const API = "https://ethiopian-it-park-backend.onrender.com";
+
 const Users = () => {
   const [users, setUsers] = useState([]);
   const [showAddUserForm, setShowAddUserForm] = useState(false);
@@ -23,28 +25,21 @@ const Users = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get(`https://ethiopian-it-park-backend.onrender.com/api/users/filter`, {
-        params: {
-          search: searchTerm,
-          status: filterValue,
-        },
+      const response = await axios.get(`${API}/api/users/filter`, {
+        params: { search: searchTerm, status: filterValue },
       });
-
-      const formattedUsers = response.data.map((user) => ({
+      const formattedUsers = (response.data || []).map((user) => ({
         ...user,
-        createdAt: new Date(user.created_at).toLocaleString(),
+        createdAt: user.created_at ? new Date(user.created_at).toLocaleString() : "—",
       }));
-
       setUsers(formattedUsers);
     } catch (err) {
       console.error("Error fetching users:", err);
-      toast.error("Failed to fetch users");
+      toast.error(err.response?.data?.message || err.response?.data?.error || "Failed to fetch users");
     }
   };
 
-  useEffect(() => {
-    fetchUsers();
-  }, [searchTerm, filterValue]);
+  useEffect(() => { fetchUsers(); }, [searchTerm, filterValue]);
 
   useEffect(() => {
     const updateItemsPerPage = () => {
@@ -54,7 +49,6 @@ const Users = () => {
       else if (width < 1024) setItemsPerPage(15);
       else setItemsPerPage(20);
     };
-
     updateItemsPerPage();
     window.addEventListener("resize", updateItemsPerPage);
     return () => window.removeEventListener("resize", updateItemsPerPage);
@@ -67,20 +61,14 @@ const Users = () => {
 
   const confirmDelete = async () => {
     if (!pendingDeleteUserId) return;
-
     try {
-      const response = await axios.delete(
-        `https://ethiopian-it-park-backend.onrender.com/api/users/delete/${pendingDeleteUserId}`
-      );
+      const response = await axios.delete(`${API}/api/users/delete/${pendingDeleteUserId}`);
       if (response.status === 200) {
-        setUsers(users.filter((user) => user.user_id !== pendingDeleteUserId));
+        setUsers(users.filter((u) => u.user_id !== pendingDeleteUserId));
         toast.success("The user has been deleted successfully.");
-      } else {
-        toast.error("Failed to delete user.");
       }
     } catch (error) {
-      console.error("Error deleting user:", error);
-      toast.error("Error deleting user.");
+      toast.error(error.response?.data?.message || error.response?.data?.error || "Error deleting user.");
     } finally {
       setIsModalOpen(false);
       setPendingDeleteUserId(null);
@@ -88,38 +76,65 @@ const Users = () => {
   };
 
   const handleAddUser = async (values, { resetForm }) => {
+    // ✅ Bug 1 fix: validate role before sending
+    if (!values.role || values.role.trim() === "") {
+      toast.error("Please select a role");
+      return;
+    }
+    if (!values.password || values.password.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
+
     try {
       const payload = {
-        username: values.username,
-        email: values.email,
+        username: values.username.trim(),
+        email: values.email.trim(),
         password: values.password,
         role: values.role,
       };
 
-      await axios.post(`https://ethiopian-it-park-backend.onrender.com/api/users/register`, payload);
+      await axios.post(`${API}/api/users/register`, payload);
       await fetchUsers();
       resetForm();
       setShowAddUserForm(false);
       toast.success("User added successfully.");
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to add user.");
+      // ✅ Bug 2 fix: show the real backend error
+      const msg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        err.message ||
+        "Failed to add user.";
+      toast.error(msg);
     }
   };
 
   const handleEditUser = async (values, { resetForm }) => {
     try {
-      const payload = { ...values };
-      await axios.put(
-        `https://ethiopian-it-park-backend.onrender.com/api/users/edit/${editingUser.user_id}`,
-        payload
-      );
+      // ✅ Bug 4 fix: don't send empty password on edit
+      const payload = {
+        username: values.username.trim(),
+        email: values.email.trim(),
+        role: values.role,
+      };
+      if (values.password && values.password.trim() !== "") {
+        payload.password = values.password;
+      }
+
+      await axios.put(`${API}/api/users/edit/${editingUser.user_id}`, payload);
       await fetchUsers();
       resetForm();
       setEditingUser(null);
       setShowAddUserForm(false);
       toast.success("User updated successfully.");
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to update user.");
+      const msg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        err.message ||
+        "Failed to update user.";
+      toast.error(msg);
     }
   };
 
@@ -136,35 +151,44 @@ const Users = () => {
     {
       Header: "Status",
       accessor: "status",
-      Cell: (row) => (
-        <span
-          className={`px-2 py-1 rounded-xl ${
-            row.status === "active" ? "text-green-500" : "text-red-500"
-          }`}
-        >
-          {row.status}
-        </span>
-      ),
+      // ✅ Bug 3 fix: use ({ row }) destructuring
+      Cell: ({ row } = {}) => {
+        const user = row ?? {};
+        const status = user.status || "active";
+        return (
+          <span
+            className={`px-2 py-1 rounded-xl ${
+              status === "active" ? "text-green-500" : "text-red-500"
+            }`}
+          >
+            {status}
+          </span>
+        );
+      },
     },
     {
       Header: "Action",
       accessor: "action",
-      Cell: (row) => (
-        <div className="flex space-x-6">
-          <button
-            onClick={() => handleEdit(row)}
-            className="text-green-500 hover:text-green-700"
-          >
-            <Edit size={18} />
-          </button>
-          <button
-            onClick={() => handleDelete(row.user_id)}
-            className="text-red-700 hover:text-red-700"
-          >
-            <Trash size={18} />
-          </button>
-        </div>
-      ),
+      // ✅ Bug 3 fix
+      Cell: ({ row } = {}) => {
+        const user = row ?? {};
+        return (
+          <div className="flex space-x-6">
+            <button
+              onClick={() => handleEdit(user)}
+              className="text-green-500 hover:text-green-700"
+            >
+              <Edit size={18} />
+            </button>
+            <button
+              onClick={() => handleDelete(user.user_id)}
+              className="text-red-700 hover:text-red-700"
+            >
+              <Trash size={18} />
+            </button>
+          </div>
+        );
+      },
     },
   ];
 
@@ -177,19 +201,11 @@ const Users = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentUsers = users.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(users.length / itemsPerPage);
-
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
+  const totalPages = Math.max(1, Math.ceil(users.length / itemsPerPage));
 
   return (
     <div>
-      <Toaster
-        position="center"
-        toastOptions={{ style: { fontSize: "1.25rem", padding: "1rem" } }}
-      />
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
         <SearchFilterComponent
           searchPlaceholder="Search Users..."
           onSearchChange={setSearchTerm}
@@ -206,29 +222,32 @@ const Users = () => {
             setShowAddUserForm(true);
           }}
         />
-        {showAddUserForm && (
-          <AddUserForm
-            onSubmit={editingUser ? handleEditUser : handleAddUser}
-            onClose={() => setShowAddUserForm(false)}
-            initialValues={
-              editingUser || {
-                username: "",
-                email: "",
-                password: "",
-                role: "",
-              }
-            }
-            formTitle={editingUser ? "Edit User" : "Add User"}
-          />
-        )}
       </div>
+
+      {showAddUserForm && (
+        <AddUserForm
+          onSubmit={editingUser ? handleEditUser : handleAddUser}
+          onClose={() => {
+            setShowAddUserForm(false);
+            setEditingUser(null);
+          }}
+          initialValues={
+            editingUser || {
+              username: "",
+              email: "",
+              password: "",
+              role: "",
+            }
+          }
+          formTitle={editingUser ? "Edit User" : "Add User"}
+        />
+      )}
 
       <Table columns={columns} data={currentUsers} />
 
-      {/* Pagination */}
       <div className="flex justify-center items-center mt-4">
         <button
-          onClick={() => handlePageChange(currentPage - 1)}
+          onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
           className={`px-3 py-1 mx-1 rounded ${
             currentPage === 1
               ? "bg-gray-300 text-gray-500 cursor-not-allowed"
@@ -242,7 +261,7 @@ const Users = () => {
           Page {currentPage} of {totalPages}
         </span>
         <button
-          onClick={() => handlePageChange(currentPage + 1)}
+          onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
           className={`px-3 py-1 mx-1 rounded ${
             currentPage === totalPages
               ? "bg-gray-300 text-gray-500 cursor-not-allowed"
