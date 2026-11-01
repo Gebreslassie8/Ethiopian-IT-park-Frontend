@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import Colors from "./Styles/Colors";
 import ReusableForm from "./Components/Forms/ReusableForm";
 import Button from "./Components/Button/ReusableButton";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, ShieldCheck, Sparkles, ArrowRight } from "lucide-react";
 import LoginValidationSchema from "./Shared/ValidationSchema/LoginValidationSchema";
+
+const API = "https://ethiopian-it-park-backend.onrender.com";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -14,14 +16,19 @@ const Login = () => {
   const navigate = useNavigate();
 
   const fields = [
-    { name: "email", type: "text", label: "Email", placeholder: "Enter Your Email" },
+    {
+      name: "email",
+      type: "email",
+      label: "Email",
+      placeholder: "Enter your email",
+    },
     {
       name: "password",
       type: showPassword ? "text" : "password",
       label: "Password",
-      placeholder: "Enter Your Password",
-      icon: showPassword ? <Eye size={20} /> : <EyeOff size={20} />,
-      onIconClick: () => setShowPassword(!showPassword),
+      placeholder: "Enter your password",
+      icon: showPassword ? <Eye size={18} /> : <EyeOff size={18} />,
+      onIconClick: () => setShowPassword((v) => !v),
     },
   ];
 
@@ -32,7 +39,7 @@ const Login = () => {
     setErrorMessage(null);
 
     try {
-      const response = await axios.post(`https://ethiopian-it-park-backend.onrender.com/api/users/login`, values);
+      const response = await axios.post(`${API}/api/users/login`, values);
       const { token, user } = response.data;
 
       localStorage.setItem("user", JSON.stringify(user));
@@ -40,31 +47,114 @@ const Login = () => {
       localStorage.setItem("profile", JSON.stringify(user));
       resetForm();
 
-      if (user.role_id === 5) {
-        navigate("/admin");
-      } else if (user.role_id === 6) {
-        navigate("/content-manager");
-      } 
-      else if (user.role_id === 3) {
-        navigate("/internal-library");
-      } 
-      else {
-        setErrorMessage("Unauthorized role");
-      }
+      if (user.role_id === 5) navigate("/admin");
+      else if (user.role_id === 6) navigate("/content-manager");
+      else if (user.role_id === 3) navigate("/internal-library");
+      else setErrorMessage("Unauthorized role");
     } catch (err) {
-      setErrorMessage(err.response?.data?.message || "An error occurred");
+      setErrorMessage(
+        err.response?.data?.message || "An error occurred. Please try again."
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="w-full h-screen flex justify-center items-center">
-      <div className="w-[840px] h-[600px] flex bg-white rounded-xl overflow-hidden shadow-lg">
-        <div className="w-[400px] rounded-tl-xl rounded-bl-xl" style={{ backgroundColor: Colors.deepTeal }}></div>
-        <div className="w-[400px] flex flex-col justify-center items-center px-10 ">
-          <h2 className="text-3xl font-bold font-['Outfit'] mb-8" style={{ color: Colors.deepTeal }}>Login</h2>
+    <div className="min-h-screen w-full flex items-stretch bg-gray-50">
+      {/* ─── Left Panel (Desktop only — hidden on mobile) ─────── */}
+      <aside
+        className="hidden lg:flex flex-col justify-between w-[45%] xl:w-[50%] p-10 xl:p-14 relative overflow-hidden"
+        style={{
+          background: `linear-gradient(135deg, ${Colors.deepTeal} 0%, ${Colors.deepBlue} 100%)`,
+        }}
+      >
+        {/* Decorative circles */}
+        <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-white/5" />
+        <div className="absolute -bottom-32 -left-32 w-[500px] h-[500px] rounded-full bg-white/5" />
 
+        {/* Brand */}
+        <div className="relative z-10">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-white/15 backdrop-blur-sm flex items-center justify-center">
+              <Sparkles size={20} className="text-white" />
+            </div>
+            <span className="text-white font-semibold text-lg tracking-tight">
+              Ethiopian IT Park
+            </span>
+          </div>
+        </div>
+
+        {/* Hero text */}
+        <div className="relative z-10 max-w-md">
+          <h1 className="text-4xl xl:text-5xl font-extrabold text-white leading-tight mb-4">
+            Your digital library, reimagined.
+          </h1>
+          <p className="text-white/80 text-base xl:text-lg leading-relaxed">
+            Access curated videos, articles, tutorials, and research papers —
+            all in one secure place.
+          </p>
+
+          <div className="mt-8 space-y-3">
+            {[
+              "Secure role-based access",
+              "Instant search across all content",
+              "Track engagement with built-in analytics",
+            ].map((item, i) => (
+              <div key={i} className="flex items-center gap-3 text-white/90">
+                <div className="w-6 h-6 rounded-full bg-white/15 flex items-center justify-center flex-shrink-0">
+                  <ShieldCheck size={14} className="text-white" />
+                </div>
+                <span className="text-sm xl:text-base">{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="relative z-10 text-white/60 text-xs">
+          © {new Date().getFullYear()} Ethiopian IT Park
+        </div>
+      </aside>
+
+      {/* ─── Right Panel (Login form) ─────────────────────────── */}
+      <main className="flex-1 flex items-center justify-center px-4 sm:px-6 md:px-8 py-8 md:py-12">
+        <div className="w-full max-w-md">
+          {/* Mobile brand (visible only on mobile/tablet) */}
+          <div className="lg:hidden flex flex-col items-center mb-8">
+            <div
+              className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4 shadow-lg"
+              style={{
+                background: `linear-gradient(135deg, ${Colors.deepTeal} 0%, ${Colors.deepBlue} 100%)`,
+              }}
+            >
+              <Sparkles size={26} className="text-white" />
+            </div>
+            <h1
+              className="text-2xl font-bold text-center"
+              style={{ color: Colors.deepTeal }}
+            >
+              Ethiopian IT Park
+            </h1>
+            <p className="text-sm text-gray-500 mt-1 text-center">
+              Digital Enterprise Content Management
+            </p>
+          </div>
+
+          {/* Heading */}
+          <div className="mb-6 sm:mb-8">
+            <h2
+              className="text-2xl sm:text-3xl font-bold tracking-tight mb-2"
+              style={{ color: Colors.deepTeal }}
+            >
+              Welcome back
+            </h2>
+            <p className="text-sm sm:text-base text-gray-500">
+              Sign in to continue to your workspace
+            </p>
+          </div>
+
+          {/* Form */}
           <ReusableForm
             id="loginForm"
             fields={fields}
@@ -73,17 +163,58 @@ const Login = () => {
             onSubmit={handleSubmit}
           />
 
-          {errorMessage && <div className="text-red-500 text-sm mt-2">{errorMessage}</div>}
+          {/* Error message */}
+          {errorMessage && (
+            <div
+              role="alert"
+              className="mt-4 flex items-start gap-2 p-3 rounded-lg bg-red-50 border border-red-200"
+            >
+              <span className="text-red-600 text-sm leading-tight">
+                {errorMessage}
+              </span>
+            </div>
+          )}
 
-          <div className="w-[300px] flex justify-end mt-2">
-            <a href="/forgotpassword" className="text-sm" style={{ color: Colors.deepTeal }}>
-              Forgot Password?
-            </a>
+          {/* Forgot password */}
+          <div className="flex justify-end mt-3 mb-6">
+            <Link
+              to="/forgotpassword"
+              className="text-sm font-medium hover:underline transition"
+              style={{ color: Colors.deepTeal }}
+            >
+              Forgot password?
+            </Link>
           </div>
 
-          <Button type="submit" label="Login" className="w-full mt-4" formId="loginForm" disabled={loading} />
+          {/* Submit button */}
+          <Button
+            type="submit"
+            label={loading ? "Signing in..." : "Sign in"}
+            className="w-full mt-2 py-3 text-base font-semibold shadow-sm hover:shadow-md transition-shadow"
+            formId="loginForm"
+            disabled={loading}
+          />
+
+          {/* Divider */}
+          <div className="mt-8 flex items-center gap-3">
+            <div className="flex-1 h-px bg-gray-200" />
+            <span className="text-xs text-gray-400 uppercase tracking-wider">
+              Need help?
+            </span>
+            <div className="flex-1 h-px bg-gray-200" />
+          </div>
+
+          {/* Support note */}
+          <p className="mt-4 text-center text-sm text-gray-500">
+            Contact your administrator if you don't have an account.
+          </p>
+
+          {/* Footer (mobile only) */}
+          <p className="lg:hidden mt-10 text-center text-xs text-gray-400">
+            © {new Date().getFullYear()} Ethiopian IT Park
+          </p>
         </div>
-      </div>
+      </main>
     </div>
   );
 };
