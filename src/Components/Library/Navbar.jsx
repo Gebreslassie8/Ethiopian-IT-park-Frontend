@@ -38,7 +38,7 @@ const Navbar = ({ onProfileClick, onNotificationClick, onSettingsClick }) => {
             borderRadius="full"
           />
           <Text ml={3} fontWeight="bold" color="black">
-            Digital Library for ICT Park
+           Digital Enterprise Content Management System for ICT Park
           </Text>
         </Flex>
 
