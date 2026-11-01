@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import LibraryLayout from "../Components/Library/LibraryLayout";
 
+const API_URL = "https://ethiopian-it-park-backend.onrender.com";
+
 export default function ExternalLibrary() {
   const [resources, setResources] = useState([]);
   const [categories, setCategories] = useState([{ label: "All", value: "" }]);
@@ -12,30 +14,25 @@ export default function ExternalLibrary() {
   const [error, setError] = useState("");
   const [relatedContents, setRelatedContents] = useState([]);
 
-  // Fetch categories (tabs)
+  // ── Fetch tabs ──────────────────────────────────────────
   useEffect(() => {
     const fetchTabs = async () => {
       try {
-        const resTabs = await axios.get(`https://ethiopian-it-park-backend.onrender.com/api/tabs`);
+        const resTabs = await axios.get(`${API_URL}/api/tabs`);
         const allTabs = Array.isArray(resTabs.data) ? resTabs.data : [];
-
         setAllCategories(allTabs);
-
         const parentTabs = allTabs
           .filter((tab) => !tab.parent)
           .map((tab) => ({ label: tab.name, value: tab.key }));
-
         setCategories([{ label: "All", value: "" }, ...parentTabs]);
       } catch (err) {
         console.error("Error loading categories:", err);
         setError("Failed to load categories.");
       }
     };
-
     fetchTabs();
   }, []);
 
-  // Get all child tab ids for a parent
   const getCategoryQuery = (tabId) => {
     if (!tabId) return "";
     const childIds = allCategories
@@ -44,46 +41,66 @@ export default function ExternalLibrary() {
     return [tabId, ...childIds].join(",");
   };
 
-  // Fetch resources and related contents on search or tab change
+  // ── Fetch resources ─────────────────────────────────────
   useEffect(() => {
     const fetchFilteredResources = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`https://ethiopian-it-park-backend.onrender.com/api/search`, {
-          params: {
-            search: searchTerm,
-            category: getCategoryQuery(activeTab),
-          },
-        });
+        setError("");
 
-        setResources(res.data);
+        // ✅ Only send params that have real values
+        const params = {};
+        if (searchTerm && searchTerm.trim()) params.search = searchTerm.trim();
+        const categoryQuery = getCategoryQuery(activeTab);
+        if (categoryQuery) params.category = categoryQuery;
 
-        // Fetch related only if we have results
-        if (res.data.length > 0) {
-          const relatedRes = await axios.get(`https://ethiopian-it-park-backend.onrender.com/api/related`, {
-            params: { for: res.data[0].content_id },
-          });
-          setRelatedContents(relatedRes.data);
+        const res = await axios.get(`${API_URL}/api/search`, { params });
+
+        // ✅ Handle different response shapes safely
+        const data = Array.isArray(res.data)
+          ? res.data
+          : Array.isArray(res.data?.data)
+          ? res.data.data
+          : [];
+
+        setResources(data);
+
+        if (data.length > 0 && data[0]?.content_id) {
+          try {
+            const relatedRes = await axios.get(`${API_URL}/api/related`, {
+              params: { for: data[0].content_id },
+            });
+            setRelatedContents(
+              Array.isArray(relatedRes.data) ? relatedRes.data : []
+            );
+          } catch (relErr) {
+            console.warn("Related fetch failed:", relErr);
+            setRelatedContents([]);
+          }
         } else {
           setRelatedContents([]);
         }
       } catch (err) {
         console.error("Error fetching external contents:", err);
-        setError("Failed to load resources.");
+        setError(
+          err.response?.data?.message || "Failed to load resources."
+        );
+        setResources([]);
         setRelatedContents([]);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchFilteredResources();
-  }, [searchTerm, activeTab]);
+    // Debounce — avoids firing on every keystroke
+    const timer = setTimeout(fetchFilteredResources, 300);
+    return () => clearTimeout(timer);
+  }, [searchTerm, activeTab, allCategories]);
 
-const recentContents = [...resources]
-  .filter((res) => res.uploaded_date)
-  .sort((a, b) => new Date(b.uploaded_date) - new Date(a.uploaded_date))
-  .slice(0, 20);
-
+  const recentContents = [...resources]
+    .filter((res) => res.uploaded_date)
+    .sort((a, b) => new Date(b.uploaded_date) - new Date(a.uploaded_date))
+    .slice(0, 20);
 
   return (
     <LibraryLayout
