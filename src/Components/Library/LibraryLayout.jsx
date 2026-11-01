@@ -128,7 +128,7 @@ const LibraryLayout = ({
       >
         <div className="max-w-4xl text-center text-white">
           <h1 className="text-5xl sm:text-6xl font-extrabold mb-6 leading-tight drop-shadow-lg">
-            Explore Our Digital Resource_core_Library 
+            Explore Our Digital Enterprise Content Management System 
           </h1>
         </div>
       </header>
