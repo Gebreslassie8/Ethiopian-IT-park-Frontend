@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Trash, Edit } from "lucide-react";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 import Table from "../Components/table/Table";
 import Button from "../Components/Button/ReusableButton";
 import SearchFilterComponent from "../Components/SearchAndFilter/SearchFilterComponent";
@@ -9,6 +9,18 @@ import AddUserForm from "../Components/Forms/AddNewUser";
 import ReusableModal from "../Components/Modals/ReusableModal";
 
 const API = "https://ethiopian-it-park-backend.onrender.com";
+
+// Extract the actual user object from either TanStack-style or raw shape
+const extractUser = (rowOrUser) => {
+  if (!rowOrUser) return {};
+  return rowOrUser.original ?? rowOrUser;
+};
+
+// Extract user ID with multiple fallbacks
+const extractUserId = (rowOrUser) => {
+  const user = extractUser(rowOrUser);
+  return user.user_id ?? user.id ?? null;
+};
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -23,6 +35,7 @@ const Users = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
+  // ─── Fetch users ────────────────────────────────────────
   const fetchUsers = async () => {
     try {
       const response = await axios.get(`${API}/api/users/filter`, {
@@ -30,16 +43,24 @@ const Users = () => {
       });
       const formattedUsers = (response.data || []).map((user) => ({
         ...user,
-        createdAt: user.created_at ? new Date(user.created_at).toLocaleString() : "—",
+        createdAt: user.created_at
+          ? new Date(user.created_at).toLocaleString()
+          : "—",
       }));
       setUsers(formattedUsers);
     } catch (err) {
       console.error("Error fetching users:", err);
-      toast.error(err.response?.data?.message || err.response?.data?.error || "Failed to fetch users");
+      toast.error(
+        err.response?.data?.message ||
+          err.response?.data?.error ||
+          "Failed to fetch users"
+      );
     }
   };
 
-  useEffect(() => { fetchUsers(); }, [searchTerm, filterValue]);
+  useEffect(() => {
+    fetchUsers();
+  }, [searchTerm, filterValue]);
 
   useEffect(() => {
     const updateItemsPerPage = () => {
@@ -54,29 +75,40 @@ const Users = () => {
     return () => window.removeEventListener("resize", updateItemsPerPage);
   }, []);
 
-  const handleDelete = (user_id) => {
-    setPendingDeleteUserId(user_id);
+  // ─── Delete ─────────────────────────────────────────────
+  const handleDelete = (userId) => {
+    if (!userId) {
+      toast.error("Cannot delete — missing user ID");
+      return;
+    }
+    setPendingDeleteUserId(userId);
     setIsModalOpen(true);
   };
 
   const confirmDelete = async () => {
     if (!pendingDeleteUserId) return;
     try {
-      const response = await axios.delete(`${API}/api/users/delete/${pendingDeleteUserId}`);
+      const response = await axios.delete(
+        `${API}/api/users/delete/${pendingDeleteUserId}`
+      );
       if (response.status === 200) {
         setUsers(users.filter((u) => u.user_id !== pendingDeleteUserId));
         toast.success("The user has been deleted successfully.");
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || error.response?.data?.error || "Error deleting user.");
+      toast.error(
+        error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Error deleting user."
+      );
     } finally {
       setIsModalOpen(false);
       setPendingDeleteUserId(null);
     }
   };
 
+  // ─── Add User ───────────────────────────────────────────
   const handleAddUser = async (values, { resetForm }) => {
-    // ✅ Bug 1 fix: validate role before sending
     if (!values.role || values.role.trim() === "") {
       toast.error("Please select a role");
       return;
@@ -100,7 +132,6 @@ const Users = () => {
       setShowAddUserForm(false);
       toast.success("User added successfully.");
     } catch (err) {
-      // ✅ Bug 2 fix: show the real backend error
       const msg =
         err.response?.data?.message ||
         err.response?.data?.error ||
@@ -110,9 +141,15 @@ const Users = () => {
     }
   };
 
+  // ─── Edit User ──────────────────────────────────────────
   const handleEditUser = async (values, { resetForm }) => {
+    const userId = extractUserId(editingUser);
+    if (!userId) {
+      toast.error("Cannot update — missing user ID");
+      return;
+    }
+
     try {
-      // ✅ Bug 4 fix: don't send empty password on edit
       const payload = {
         username: values.username.trim(),
         email: values.email.trim(),
@@ -122,7 +159,7 @@ const Users = () => {
         payload.password = values.password;
       }
 
-      await axios.put(`${API}/api/users/edit/${editingUser.user_id}`, payload);
+      await axios.put(`${API}/api/users/edit/${userId}`, payload);
       await fetchUsers();
       resetForm();
       setEditingUser(null);
@@ -138,11 +175,18 @@ const Users = () => {
     }
   };
 
-  const handleEdit = (user) => {
+  const handleEdit = (rowOrUser) => {
+    const user = extractUser(rowOrUser);
+    if (!extractUserId(user)) {
+      console.error("Cannot edit — no user_id:", rowOrUser);
+      toast.error("Cannot edit — missing user ID");
+      return;
+    }
     setEditingUser(user);
     setShowAddUserForm(true);
   };
 
+  // ─── Table columns ──────────────────────────────────────
   const columns = [
     { Header: "Id", accessor: "user_id" },
     { Header: "Username", accessor: "username" },
@@ -151,9 +195,8 @@ const Users = () => {
     {
       Header: "Status",
       accessor: "status",
-      // ✅ Bug 3 fix: use ({ row }) destructuring
       Cell: ({ row } = {}) => {
-        const user = row ?? {};
+        const user = extractUser(row);
         const status = user.status || "active";
         return (
           <span
@@ -169,20 +212,27 @@ const Users = () => {
     {
       Header: "Action",
       accessor: "action",
-      // ✅ Bug 3 fix
       Cell: ({ row } = {}) => {
-        const user = row ?? {};
+        const user = extractUser(row);
+        const userId = extractUserId(user);
+
         return (
           <div className="flex space-x-6">
             <button
+              type="button"
               onClick={() => handleEdit(user)}
-              className="text-green-500 hover:text-green-700"
+              className="text-green-500 hover:text-green-700 disabled:opacity-50"
+              disabled={!userId}
+              title={!userId ? "Missing user ID" : "Edit user"}
             >
               <Edit size={18} />
             </button>
             <button
-              onClick={() => handleDelete(user.user_id)}
-              className="text-red-700 hover:text-red-700"
+              type="button"
+              onClick={() => handleDelete(userId)}
+              className="text-red-700 hover:text-red-700 disabled:opacity-50"
+              disabled={!userId}
+              title={!userId ? "Missing user ID" : "Delete user"}
             >
               <Trash size={18} />
             </button>
@@ -232,12 +282,19 @@ const Users = () => {
             setEditingUser(null);
           }}
           initialValues={
-            editingUser || {
-              username: "",
-              email: "",
-              password: "",
-              role: "",
-            }
+            editingUser
+              ? {
+                  username: editingUser.username || "",
+                  email: editingUser.email || "",
+                  password: "",
+                  role: editingUser.role || editingUser.role_name || "",
+                }
+              : {
+                  username: "",
+                  email: "",
+                  password: "",
+                  role: "",
+                }
           }
           formTitle={editingUser ? "Edit User" : "Add User"}
         />
