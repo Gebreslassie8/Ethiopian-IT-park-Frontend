@@ -10,13 +10,12 @@ import ReusableModal from "../Components/Modals/ReusableModal";
 
 const API = "https://ethiopian-it-park-backend.onrender.com";
 
-// Extract the actual user object from either TanStack-style or raw shape
+// Handle both raw object and TanStack-style { original: ... } wrapper
 const extractUser = (rowOrUser) => {
   if (!rowOrUser) return {};
   return rowOrUser.original ?? rowOrUser;
 };
 
-// Extract user ID with multiple fallbacks
 const extractUserId = (rowOrUser) => {
   const user = extractUser(rowOrUser);
   return user.user_id ?? user.id ?? null;
@@ -35,7 +34,6 @@ const Users = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
-  // ─── Fetch users ────────────────────────────────────────
   const fetchUsers = async () => {
     try {
       const response = await axios.get(`${API}/api/users/filter`, {
@@ -75,7 +73,6 @@ const Users = () => {
     return () => window.removeEventListener("resize", updateItemsPerPage);
   }, []);
 
-  // ─── Delete ─────────────────────────────────────────────
   const handleDelete = (userId) => {
     if (!userId) {
       toast.error("Cannot delete — missing user ID");
@@ -107,7 +104,6 @@ const Users = () => {
     }
   };
 
-  // ─── Add User ───────────────────────────────────────────
   const handleAddUser = async (values, { resetForm }) => {
     if (!values.role || values.role.trim() === "") {
       toast.error("Please select a role");
@@ -141,7 +137,6 @@ const Users = () => {
     }
   };
 
-  // ─── Edit User ──────────────────────────────────────────
   const handleEditUser = async (values, { resetForm }) => {
     const userId = extractUserId(editingUser);
     if (!userId) {
@@ -186,7 +181,6 @@ const Users = () => {
     setShowAddUserForm(true);
   };
 
-  // ─── Table columns ──────────────────────────────────────
   const columns = [
     { Header: "Id", accessor: "user_id" },
     { Header: "Username", accessor: "username" },
@@ -195,7 +189,8 @@ const Users = () => {
     {
       Header: "Status",
       accessor: "status",
-      Cell: ({ row } = {}) => {
+      // ✅ CORRECTED: Table.jsx calls Cell(row) — no destructuring
+      Cell: (row) => {
         const user = extractUser(row);
         const status = user.status || "active";
         return (
@@ -212,7 +207,8 @@ const Users = () => {
     {
       Header: "Action",
       accessor: "action",
-      Cell: ({ row } = {}) => {
+      // ✅ CORRECTED: Table.jsx calls Cell(row) — no destructuring
+      Cell: (row) => {
         const user = extractUser(row);
         const userId = extractUserId(user);
 
