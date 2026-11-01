@@ -4,6 +4,41 @@ import { MoreVertical } from "lucide-react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 
+// ─── Action button as its own component (so useNavigate can run) ───
+function ActionCell({ row }) {
+  const navigate = useNavigate();
+
+  // Handle both shapes: { row: { original: {...} } } (TanStack) and { row: {...} } (custom)
+  const id = row?.original?.id ?? row?.id;
+
+  const handleMoreClick = () => {
+    if (!id) {
+      console.warn("No id found on row:", row);
+      return;
+    }
+    navigate(`/dashboard/contents/${id}`);
+  };
+
+  return (
+    <div className="flex space-x-6">
+      <button
+        type="button"
+        className="text-green-500 hover:text-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+        onClick={handleMoreClick}
+        disabled={!id}
+        aria-label="View content"
+      >
+        <MoreVertical size={24} />
+      </button>
+    </div>
+  );
+}
+
+ActionCell.propTypes = {
+  row: PropTypes.object,
+};
+
+// ─── Columns ───
 const contentColumns = [
   { Header: "ID", accessor: "id" },
   { Header: "Title", accessor: "title" },
@@ -13,23 +48,7 @@ const contentColumns = [
   {
     Header: "Action",
     accessor: "action",
-    Cell: ({ row }) => {
-      const navigate = useNavigate();
-      const handleMoreClick = () => {
-        navigate(`dashboard/contents${row.original.id}`);
-      };
-
-      return (
-        <div className="flex space-x-6">
-          <button
-            className="text-green-500 hover:text-green-700"
-            onClick={handleMoreClick}
-          >
-            <MoreVertical size={24} />
-          </button>
-        </div>
-      );
-    },
+    Cell: ActionCell,
   },
 ];
 
@@ -43,24 +62,7 @@ const RecentlyUploadedContentsTable = ({ data }) => {
 };
 
 RecentlyUploadedContentsTable.propTypes = {
-  data: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-      title: PropTypes.string.isRequired,
-      category: PropTypes.string.isRequired,
-      uploader: PropTypes.string.isRequired,
-      uploaded_date: PropTypes.string.isRequired,
-      original: PropTypes.shape({
-        id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-        title: PropTypes.string.isRequired,
-        category: PropTypes.string.isRequired,
-        uploader: PropTypes.string.isRequired,
-        uploaded_date: PropTypes.string.isRequired,
-      }).isRequired,
-    })
-  ).isRequired,
-
-  
+  data: PropTypes.array,
 };
 
 export default RecentlyUploadedContentsTable;
