@@ -54,31 +54,20 @@ export default function DashboardLayout({ role, children }) {
           className="flex-1 overflow-y-auto p-6 relative text-base md:text-xl"
           style={{ color: Colors.smokyGray }}
         >
-          {/* Modals */}
-          {showProfile && (
-            <div className="absolute inset-0 bg-opacity-30 flex justify-center items-center z-50">
-              <MyProfile onClose={() => setShowProfile(false)} />
-            </div>
-          )}
-          {showNotification && (
-            <div className="fixed top-20 right-5 z-[9999] flex flex-col items-end space-y-3">
-              <Notification
-                type="success"
-                message="You have a new message!"
-                onClose={() => setShowNotification(false)}
-              />
-            </div>
-          )}
-          {showSettings && (
-            <div className="absolute inset-0 bg-opacity-30 flex justify-center items-center z-50">
-              <Settings onClose={() => setShowSettings(false)} />
-            </div>
-          )}
-
-          {/* Page Content */}
           {loading ? <p>Loading profile...</p> : children}
         </div>
       </div>
+
+      {/* ─── Modals rendered OUTSIDE the content area ─── */}
+      {showProfile && <MyProfile onClose={() => setShowProfile(false)} />}
+      {showNotification && (
+        <Notification
+          type="success"
+          message="You have a new message!"
+          onClose={() => setShowNotification(false)}
+        />
+      )}
+      {showSettings && <Settings onClose={() => setShowSettings(false)} />}
     </div>
   );
 }
