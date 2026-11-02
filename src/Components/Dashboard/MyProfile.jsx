@@ -162,10 +162,7 @@ const MyProfile = ({ onClose }) => {
         aria-hidden="true"
         style={{
           position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
+          inset: 0,
           backgroundColor: "rgba(0, 0, 0, 0.5)",
           zIndex: 9998,
         }}
@@ -175,14 +172,11 @@ const MyProfile = ({ onClose }) => {
       <div
         style={{
           position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
+          inset: 0,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          padding: "16px",
+          padding: "8px",
           zIndex: 9999,
           pointerEvents: "none",
         }}
@@ -202,7 +196,7 @@ const MyProfile = ({ onClose }) => {
               "0 20px 25px -5px rgba(0,0,0,0.15), 0 10px 10px -5px rgba(0,0,0,0.1)",
             display: "flex",
             flexDirection: "column",
-            maxHeight: "90vh",
+            maxHeight: "calc(100vh - 16px)",
             overflow: "hidden",
           }}
         >
@@ -211,8 +205,8 @@ const MyProfile = ({ onClose }) => {
             style={{
               display: "flex",
               alignItems: "flex-start",
-              gap: "12px",
-              padding: "16px 20px",
+              gap: "10px",
+              padding: "14px 16px",
               borderBottom: "1px solid #e5e7eb",
               flexShrink: 0,
             }}
@@ -221,8 +215,8 @@ const MyProfile = ({ onClose }) => {
             <div style={{ position: "relative", flexShrink: 0 }}>
               <div
                 style={{
-                  width: "56px",
-                  height: "56px",
+                  width: "48px",
+                  height: "48px",
                   borderRadius: "50%",
                   overflow: "hidden",
                   backgroundColor: "#f3f4f6",
@@ -243,7 +237,7 @@ const MyProfile = ({ onClose }) => {
                     }}
                   />
                 ) : (
-                  <User size={22} color="#9ca3af" />
+                  <User size={20} color="#9ca3af" />
                 )}
               </div>
               <button
@@ -254,8 +248,8 @@ const MyProfile = ({ onClose }) => {
                   position: "absolute",
                   bottom: "-2px",
                   right: "-2px",
-                  width: "24px",
-                  height: "24px",
+                  width: "22px",
+                  height: "22px",
                   backgroundColor: "#ffffff",
                   border: "1px solid #d1d5db",
                   borderRadius: "50%",
@@ -266,7 +260,7 @@ const MyProfile = ({ onClose }) => {
                   boxShadow: "0 1px 2px rgba(0,0,0,0.1)",
                 }}
               >
-                <Camera size={11} color="#4b5563" />
+                <Camera size={10} color="#4b5563" />
               </button>
               <input
                 type="file"
@@ -282,7 +276,7 @@ const MyProfile = ({ onClose }) => {
               <h2
                 id="profile-title"
                 style={{
-                  fontSize: "16px",
+                  fontSize: "15px",
                   fontWeight: 600,
                   color: "#111827",
                   margin: 0,
@@ -293,9 +287,9 @@ const MyProfile = ({ onClose }) => {
               </h2>
               <p
                 style={{
-                  fontSize: "12px",
+                  fontSize: "11px",
                   color: "#6b7280",
-                  margin: "4px 0 0 0",
+                  margin: "3px 0 0 0",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
@@ -312,8 +306,8 @@ const MyProfile = ({ onClose }) => {
               aria-label="Close"
               style={{
                 flexShrink: 0,
-                padding: "6px",
-                borderRadius: "8px",
+                padding: "4px",
+                borderRadius: "6px",
                 backgroundColor: "transparent",
                 border: "none",
                 cursor: "pointer",
@@ -321,7 +315,7 @@ const MyProfile = ({ onClose }) => {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                marginTop: "-4px",
+                marginTop: "-2px",
                 marginRight: "-4px",
               }}
             >
@@ -334,11 +328,18 @@ const MyProfile = ({ onClose }) => {
             style={{
               flex: 1,
               overflowY: "auto",
-              padding: "16px 20px",
+              padding: "14px 16px",
               minHeight: 0,
+              WebkitOverflowScrolling: "touch",
             }}
           >
-            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "14px",
+              }}
+            >
               <Field
                 label="Name"
                 name="username"
@@ -365,7 +366,7 @@ const MyProfile = ({ onClose }) => {
               display: "flex",
               gap: "8px",
               justifyContent: "flex-end",
-              padding: "12px 20px",
+              padding: "10px 16px",
               borderTop: "1px solid #d1d5db",
               backgroundColor: "#f3f4f6",
               flexShrink: 0,
@@ -376,9 +377,9 @@ const MyProfile = ({ onClose }) => {
               onClick={onClose}
               disabled={saving}
               style={{
-                padding: "8px 16px",
+                padding: "8px 14px",
                 borderRadius: "8px",
-                fontSize: "14px",
+                fontSize: "13px",
                 fontWeight: 500,
                 backgroundColor: "#ffffff",
                 color: "#374151",
@@ -394,24 +395,24 @@ const MyProfile = ({ onClose }) => {
               onClick={handleSave}
               disabled={saving}
               style={{
-                padding: "8px 16px",
+                padding: "8px 14px",
                 borderRadius: "8px",
-                fontSize: "14px",
+                fontSize: "13px",
                 fontWeight: 600,
                 backgroundColor: saving ? "#93c5fd" : "#2563eb",
                 color: "#ffffff",
                 border: "none",
                 cursor: saving ? "not-allowed" : "pointer",
-                minWidth: "100px",
+                minWidth: "90px",
               }}
             >
-              {saving ? "Saving..." : "Save Changes"}
+              {saving ? "Saving..." : "Save"}
             </button>
           </div>
         </div>
       </div>
 
-      {/* ═══════ IMAGE CONFIRM ═══════ */}
+      {/* ═══════ IMAGE CONFIRM MODAL ═══════ */}
       <ReusableModal
         isOpen={showModal}
         onClose={handleCancelImage}
