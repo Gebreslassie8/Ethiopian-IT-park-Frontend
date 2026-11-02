@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import { createPortal } from "react-dom";
 import { X, User, Mail, Camera } from "lucide-react";
 import axios from "axios";
 import ReusableModal from "../Modals/ReusableModal";
@@ -154,7 +155,10 @@ const MyProfile = ({ onClose }) => {
     }
   };
 
-  return (
+  // ═══════════════════════════════════════════════════════════════
+  // RENDER VIA PORTAL — this is the key fix for mobile overflow
+  // ═══════════════════════════════════════════════════════════════
+  return createPortal(
     <>
       {/* ═══════ BACKDROP ═══════ */}
       <div
@@ -406,7 +410,7 @@ const MyProfile = ({ onClose }) => {
                 minWidth: "90px",
               }}
             >
-              {saving ? "Saving..." : "Save"}
+              {saving ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </div>
@@ -453,11 +457,12 @@ const MyProfile = ({ onClose }) => {
         confirmText={uploading ? "Uploading..." : "Upload"}
         confirmColor="blue"
       />
-    </>
+    </>,
+    document.body
   );
 };
 
-/* ═══════ FIELD COMPONENT — inline styles only ═══════ */
+/* ═══════ FIELD COMPONENT ═══════ */
 const Field = ({
   icon,
   label,
