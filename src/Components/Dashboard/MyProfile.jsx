@@ -33,7 +33,6 @@ const MyProfile = ({ onClose }) => {
     }
   }, [user]);
 
-  // Lock background scroll
   useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -42,7 +41,6 @@ const MyProfile = ({ onClose }) => {
     };
   }, []);
 
-  // ESC to close
   useEffect(() => {
     const handler = (e) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", handler);
@@ -160,69 +158,149 @@ const MyProfile = ({ onClose }) => {
     <>
       {/* ═══════ BACKDROP ═══════ */}
       <div
-        className="fixed inset-0 bg-black/50"
-        style={{ zIndex: 100 }}
         onClick={onClose}
         aria-hidden="true"
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          zIndex: 9998,
+        }}
       />
 
       {/* ═══════ MODAL WRAPPER ═══════ */}
       <div
-        className="fixed inset-0 flex items-center justify-center p-4
-                   sm:items-start sm:justify-end sm:p-6 sm:pt-20"
-        style={{ zIndex: 101 }}
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "16px",
+          zIndex: 9999,
+          pointerEvents: "none",
+        }}
       >
         {/* ═══════ MODAL PANEL ═══════ */}
         <div
-          className="w-full max-w-md sm:max-w-sm bg-white rounded-2xl shadow-2xl flex flex-col"
-          style={{ maxHeight: "90vh" }}
           role="dialog"
           aria-modal="true"
           aria-labelledby="profile-title"
+          style={{
+            pointerEvents: "auto",
+            width: "100%",
+            maxWidth: "420px",
+            backgroundColor: "#ffffff",
+            borderRadius: "16px",
+            boxShadow:
+              "0 20px 25px -5px rgba(0,0,0,0.15), 0 10px 10px -5px rgba(0,0,0,0.1)",
+            display: "flex",
+            flexDirection: "column",
+            maxHeight: "90vh",
+            overflow: "hidden",
+          }}
         >
           {/* ═══════ HEADER ═══════ */}
-          <div className="flex items-start gap-3 px-5 pt-5 pb-4 border-b border-gray-100">
+          <div
+            style={{
+              display: "flex",
+              alignItems: "flex-start",
+              gap: "12px",
+              padding: "16px 20px",
+              borderBottom: "1px solid #e5e7eb",
+              flexShrink: 0,
+            }}
+          >
             {/* Avatar */}
-            <div className="relative shrink-0">
-              <div className="w-14 h-14 rounded-full overflow-hidden ring-2 ring-gray-100 bg-gray-50">
+            <div style={{ position: "relative", flexShrink: 0 }}>
+              <div
+                style={{
+                  width: "56px",
+                  height: "56px",
+                  borderRadius: "50%",
+                  overflow: "hidden",
+                  backgroundColor: "#f3f4f6",
+                  border: "2px solid #e5e7eb",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
                 {preview ? (
                   <img
                     src={preview}
                     alt="Your avatar"
-                    className="w-full h-full object-cover"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-400">
-                    <User size={22} />
-                  </div>
+                  <User size={22} color="#9ca3af" />
                 )}
               </div>
               <button
                 type="button"
                 onClick={handleEditIconClick}
-                className="absolute -bottom-0.5 -right-0.5 w-6 h-6 bg-white border border-gray-200 rounded-full shadow flex items-center justify-center"
                 aria-label="Change profile picture"
+                style={{
+                  position: "absolute",
+                  bottom: "-2px",
+                  right: "-2px",
+                  width: "24px",
+                  height: "24px",
+                  backgroundColor: "#ffffff",
+                  border: "1px solid #d1d5db",
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  boxShadow: "0 1px 2px rgba(0,0,0,0.1)",
+                }}
               >
-                <Camera size={11} className="text-gray-600" />
+                <Camera size={11} color="#4b5563" />
               </button>
               <input
                 type="file"
                 ref={fileInputRef}
-                className="hidden"
+                style={{ display: "none" }}
                 onChange={handleFileChange}
                 accept="image/*"
               />
             </div>
 
             {/* Title + subtitle */}
-            <div className="flex-1 min-w-0 pt-0.5">
+            <div style={{ flex: 1, minWidth: 0, paddingTop: "2px" }}>
               <h2
                 id="profile-title"
-                className="text-base font-semibold text-gray-900 leading-tight"
+                style={{
+                  fontSize: "16px",
+                  fontWeight: 600,
+                  color: "#111827",
+                  margin: 0,
+                  lineHeight: 1.2,
+                }}
               >
                 Profile
               </h2>
-              <p className="text-xs text-gray-500 mt-0.5 truncate">
+              <p
+                style={{
+                  fontSize: "12px",
+                  color: "#6b7280",
+                  margin: "4px 0 0 0",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
                 {formData.email || "Manage your account"}
               </p>
             </div>
@@ -231,16 +309,36 @@ const MyProfile = ({ onClose }) => {
             <button
               type="button"
               onClick={onClose}
-              className="shrink-0 -mr-1 p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100"
               aria-label="Close"
+              style={{
+                flexShrink: 0,
+                padding: "6px",
+                borderRadius: "8px",
+                backgroundColor: "transparent",
+                border: "none",
+                cursor: "pointer",
+                color: "#9ca3af",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: "-4px",
+                marginRight: "-4px",
+              }}
             >
               <X size={18} />
             </button>
           </div>
 
           {/* ═══════ BODY ═══════ */}
-          <div className="flex-1 overflow-y-auto px-5 py-4">
-            <div className="space-y-4">
+          <div
+            style={{
+              flex: 1,
+              overflowY: "auto",
+              padding: "16px 20px",
+              minHeight: 0,
+            }}
+          >
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
               <Field
                 label="Name"
                 name="username"
@@ -262,12 +360,32 @@ const MyProfile = ({ onClose }) => {
           </div>
 
           {/* ═══════ FOOTER ═══════ */}
-          <div className="flex gap-2 justify-end px-5 py-3.5 border-t border-gray-100 bg-gray-50">
+          <div
+            style={{
+              display: "flex",
+              gap: "8px",
+              justifyContent: "flex-end",
+              padding: "12px 20px",
+              borderTop: "1px solid #d1d5db",
+              backgroundColor: "#f3f4f6",
+              flexShrink: 0,
+            }}
+          >
             <button
               type="button"
               onClick={onClose}
               disabled={saving}
-              className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 bg-white border border-gray-200 hover:bg-gray-100"
+              style={{
+                padding: "8px 16px",
+                borderRadius: "8px",
+                fontSize: "14px",
+                fontWeight: 500,
+                backgroundColor: "#ffffff",
+                color: "#374151",
+                border: "1px solid #9ca3af",
+                cursor: saving ? "not-allowed" : "pointer",
+                opacity: saving ? 0.5 : 1,
+              }}
             >
               Cancel
             </button>
@@ -276,10 +394,16 @@ const MyProfile = ({ onClose }) => {
               onClick={handleSave}
               disabled={saving}
               style={{
+                padding: "8px 16px",
+                borderRadius: "8px",
+                fontSize: "14px",
+                fontWeight: 600,
                 backgroundColor: saving ? "#93c5fd" : "#2563eb",
                 color: "#ffffff",
+                border: "none",
+                cursor: saving ? "not-allowed" : "pointer",
+                minWidth: "100px",
               }}
-              className="px-4 py-2 rounded-lg text-sm font-semibold"
             >
               {saving ? "Saving..." : "Save Changes"}
             </button>
@@ -287,20 +411,39 @@ const MyProfile = ({ onClose }) => {
         </div>
       </div>
 
-      {/* ═══════ IMAGE CONFIRM MODAL ═══════ */}
+      {/* ═══════ IMAGE CONFIRM ═══════ */}
       <ReusableModal
         isOpen={showModal}
         onClose={handleCancelImage}
         onConfirm={handleConfirmImage}
         title="Confirm Profile Picture"
         body={
-          <div className="flex flex-col items-center">
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
             <img
               src={tempPreview}
               alt="Preview"
-              className="w-32 h-32 rounded-full object-cover mb-4 border"
+              style={{
+                width: "128px",
+                height: "128px",
+                borderRadius: "50%",
+                objectFit: "cover",
+                marginBottom: "16px",
+                border: "1px solid #e5e7eb",
+              }}
             />
-            <span className="text-sm text-gray-600 text-center">
+            <span
+              style={{
+                fontSize: "14px",
+                color: "#4b5563",
+                textAlign: "center",
+              }}
+            >
               Use this as your profile picture?
             </span>
           </div>
@@ -313,15 +456,43 @@ const MyProfile = ({ onClose }) => {
   );
 };
 
-/* ═══════ FIELD COMPONENT ═══════ */
-const Field = ({ icon, label, name, value, onChange, placeholder, type = "text" }) => (
+/* ═══════ FIELD COMPONENT — inline styles only ═══════ */
+const Field = ({
+  icon,
+  label,
+  name,
+  value,
+  onChange,
+  placeholder,
+  type = "text",
+}) => (
   <div>
-    <label htmlFor={name} className="block text-xs font-medium text-gray-600 mb-1.5">
+    <label
+      htmlFor={name}
+      style={{
+        display: "block",
+        fontSize: "12px",
+        fontWeight: 500,
+        color: "#4b5563",
+        marginBottom: "6px",
+      }}
+    >
       {label}
     </label>
-    <div className="relative">
+    <div style={{ position: "relative" }}>
       {icon && (
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+        <span
+          style={{
+            position: "absolute",
+            left: "12px",
+            top: "50%",
+            transform: "translateY(-50%)",
+            color: "#9ca3af",
+            pointerEvents: "none",
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
           {icon}
         </span>
       )}
@@ -332,7 +503,20 @@ const Field = ({ icon, label, name, value, onChange, placeholder, type = "text" 
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className="w-full pl-10 pr-3 py-2.5 text-sm text-gray-900 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500"
+        style={{
+          width: "100%",
+          paddingLeft: "40px",
+          paddingRight: "12px",
+          paddingTop: "10px",
+          paddingBottom: "10px",
+          fontSize: "14px",
+          color: "#111827",
+          backgroundColor: "#ffffff",
+          border: "1px solid #d1d5db",
+          borderRadius: "8px",
+          outline: "none",
+          boxSizing: "border-box",
+        }}
       />
     </div>
   </div>
