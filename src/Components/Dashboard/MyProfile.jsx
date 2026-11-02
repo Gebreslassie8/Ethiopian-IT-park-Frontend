@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import { createPortal } from "react-dom";
 import { X, User, Mail, Camera } from "lucide-react";
 import axios from "axios";
 import ReusableModal from "../Modals/ReusableModal";
@@ -71,7 +72,7 @@ const MyProfile = ({ onClose }) => {
     setUploading(true);
     try {
       const token = localStorage.getItem("token");
-      if (!token) return toast.error("Session expired. Please log in again.");
+      if (!token) return toast.error("Session expired.");
 
       const form = new FormData();
       form.append("profileImage", file);
@@ -151,9 +152,8 @@ const MyProfile = ({ onClose }) => {
     }
   };
 
-  return (
+  return createPortal(
     <>
-      {/* BACKDROP */}
       <div
         onClick={onClose}
         style={{
@@ -167,7 +167,6 @@ const MyProfile = ({ onClose }) => {
         }}
       />
 
-      {/* MODAL */}
       <div
         style={{
           position: "fixed",
@@ -199,7 +198,6 @@ const MyProfile = ({ onClose }) => {
             overflow: "hidden",
           }}
         >
-          {/* HEADER */}
           <div
             style={{
               display: "flex",
@@ -228,7 +226,11 @@ const MyProfile = ({ onClose }) => {
                   <img
                     src={preview}
                     alt="avatar"
-                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
                   />
                 ) : (
                   <User size={20} color="#9ca3af" />
@@ -251,7 +253,6 @@ const MyProfile = ({ onClose }) => {
                   alignItems: "center",
                   justifyContent: "center",
                   cursor: "pointer",
-                  boxShadow: "0 1px 2px rgba(0,0,0,0.1)",
                 }}
               >
                 <Camera size={10} color="#4b5563" />
@@ -303,15 +304,12 @@ const MyProfile = ({ onClose }) => {
                 border: "none",
                 cursor: "pointer",
                 color: "#9ca3af",
-                marginTop: "-2px",
-                marginRight: "-4px",
               }}
             >
               <X size={18} />
             </button>
           </div>
 
-          {/* BODY */}
           <div
             style={{
               flex: 1,
@@ -320,7 +318,13 @@ const MyProfile = ({ onClose }) => {
               minHeight: 0,
             }}
           >
-            <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "14px",
+              }}
+            >
               <Field
                 label="Name"
                 name="username"
@@ -341,7 +345,6 @@ const MyProfile = ({ onClose }) => {
             </div>
           </div>
 
-          {/* FOOTER */}
           <div
             style={{
               display: "flex",
@@ -392,14 +395,19 @@ const MyProfile = ({ onClose }) => {
         </div>
       </div>
 
-      {/* IMAGE CONFIRM */}
       <ReusableModal
         isOpen={showModal}
         onClose={handleCancelImage}
         onConfirm={handleConfirmImage}
         title="Confirm Profile Picture"
         body={
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
             <img
               src={tempPreview}
               alt="Preview"
@@ -412,7 +420,13 @@ const MyProfile = ({ onClose }) => {
                 border: "1px solid #e5e7eb",
               }}
             />
-            <span style={{ fontSize: "14px", color: "#4b5563", textAlign: "center" }}>
+            <span
+              style={{
+                fontSize: "14px",
+                color: "#4b5563",
+                textAlign: "center",
+              }}
+            >
               Use this as your profile picture?
             </span>
           </div>
@@ -421,11 +435,20 @@ const MyProfile = ({ onClose }) => {
         confirmText={uploading ? "Uploading..." : "Upload"}
         confirmColor="blue"
       />
-    </>
+    </>,
+    document.body
   );
 };
 
-const Field = ({ icon, label, name, value, onChange, placeholder, type = "text" }) => (
+const Field = ({
+  icon,
+  label,
+  name,
+  value,
+  onChange,
+  placeholder,
+  type = "text",
+}) => (
   <div>
     <label
       htmlFor={name}
