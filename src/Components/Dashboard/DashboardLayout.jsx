@@ -34,7 +34,6 @@ export default function DashboardLayout({ role, children }) {
 
   return (
     <>
-      {/* ═══════ MAIN LAYOUT ═══════ */}
       <div
         className="h-screen flex"
         style={{ backgroundColor: Colors.backgroundColor }}
@@ -64,7 +63,6 @@ export default function DashboardLayout({ role, children }) {
         </div>
       </div>
 
-      {/* ═══════ MODALS AT ROOT — OUTSIDE ANY SCROLL CONTAINER ═══════ */}
       {showProfile && <MyProfile onClose={() => setShowProfile(false)} />}
 
       {showNotification && (

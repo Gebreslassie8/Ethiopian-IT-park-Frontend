@@ -1,6 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { createPortal } from "react-dom";
 import { X, User, Mail, Camera } from "lucide-react";
 import axios from "axios";
 import ReusableModal from "../Modals/ReusableModal";
@@ -95,11 +94,11 @@ const MyProfile = ({ onClose }) => {
       setFile(null);
       toast.success(res.data?.message || "Profile picture updated!");
     } catch (error) {
-      const msg =
+      toast.error(
         error.response?.data?.message ||
-        error.response?.data?.error ||
-        "Image upload failed.";
-      toast.error(msg);
+          error.response?.data?.error ||
+          "Image upload failed."
+      );
     } finally {
       setUploading(false);
     }
@@ -121,7 +120,7 @@ const MyProfile = ({ onClose }) => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
-        toast.error("Session expired. Please log in again.");
+        toast.error("Session expired.");
         return onClose();
       }
 
@@ -134,11 +133,8 @@ const MyProfile = ({ onClose }) => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      const ok =
-        res.status >= 200 && res.status < 300 && res.data?.success !== false;
-
-      if (ok) {
-        toast.success(res.data?.message || "Profile updated successfully!");
+      if (res.status >= 200 && res.status < 300 && res.data?.success !== false) {
+        toast.success(res.data?.message || "Profile updated!");
         await fetchProfile();
         onClose();
       } else {
@@ -155,56 +151,55 @@ const MyProfile = ({ onClose }) => {
     }
   };
 
-  // ═══════════════════════════════════════════════════════════════
-  // RENDER VIA PORTAL — this is the key fix for mobile overflow
-  // ═══════════════════════════════════════════════════════════════
-  return createPortal(
+  return (
     <>
-      {/* ═══════ BACKDROP ═══════ */}
+      {/* BACKDROP */}
       <div
         onClick={onClose}
-        aria-hidden="true"
         style={{
           position: "fixed",
-          inset: 0,
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-          zIndex: 9998,
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+          backgroundColor: "rgba(0, 0, 0, 0.6)",
+          zIndex: 99998,
         }}
       />
 
-      {/* ═══════ MODAL WRAPPER ═══════ */}
+      {/* MODAL */}
       <div
         style={{
           position: "fixed",
-          inset: 0,
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          padding: "8px",
-          zIndex: 9999,
-          pointerEvents: "none",
+          padding: "12px",
+          zIndex: 99999,
+          boxSizing: "border-box",
         }}
       >
-        {/* ═══════ MODAL PANEL ═══════ */}
         <div
           role="dialog"
           aria-modal="true"
           aria-labelledby="profile-title"
           style={{
-            pointerEvents: "auto",
             width: "100%",
             maxWidth: "420px",
+            maxHeight: "calc(100vh - 24px)",
             backgroundColor: "#ffffff",
             borderRadius: "16px",
-            boxShadow:
-              "0 20px 25px -5px rgba(0,0,0,0.15), 0 10px 10px -5px rgba(0,0,0,0.1)",
+            boxShadow: "0 25px 50px rgba(0, 0, 0, 0.25)",
             display: "flex",
             flexDirection: "column",
-            maxHeight: "calc(100vh - 16px)",
             overflow: "hidden",
           }}
         >
-          {/* ═══════ HEADER ═══════ */}
+          {/* HEADER */}
           <div
             style={{
               display: "flex",
@@ -215,7 +210,6 @@ const MyProfile = ({ onClose }) => {
               flexShrink: 0,
             }}
           >
-            {/* Avatar */}
             <div style={{ position: "relative", flexShrink: 0 }}>
               <div
                 style={{
@@ -233,12 +227,8 @@ const MyProfile = ({ onClose }) => {
                 {preview ? (
                   <img
                     src={preview}
-                    alt="Your avatar"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
+                    alt="avatar"
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
                   />
                 ) : (
                   <User size={20} color="#9ca3af" />
@@ -247,7 +237,7 @@ const MyProfile = ({ onClose }) => {
               <button
                 type="button"
                 onClick={handleEditIconClick}
-                aria-label="Change profile picture"
+                aria-label="Change picture"
                 style={{
                   position: "absolute",
                   bottom: "-2px",
@@ -275,7 +265,6 @@ const MyProfile = ({ onClose }) => {
               />
             </div>
 
-            {/* Title + subtitle */}
             <div style={{ flex: 1, minWidth: 0, paddingTop: "2px" }}>
               <h2
                 id="profile-title"
@@ -284,7 +273,6 @@ const MyProfile = ({ onClose }) => {
                   fontWeight: 600,
                   color: "#111827",
                   margin: 0,
-                  lineHeight: 1.2,
                 }}
               >
                 Profile
@@ -303,7 +291,6 @@ const MyProfile = ({ onClose }) => {
               </p>
             </div>
 
-            {/* Close */}
             <button
               type="button"
               onClick={onClose}
@@ -316,9 +303,6 @@ const MyProfile = ({ onClose }) => {
                 border: "none",
                 cursor: "pointer",
                 color: "#9ca3af",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
                 marginTop: "-2px",
                 marginRight: "-4px",
               }}
@@ -327,23 +311,16 @@ const MyProfile = ({ onClose }) => {
             </button>
           </div>
 
-          {/* ═══════ BODY ═══════ */}
+          {/* BODY */}
           <div
             style={{
               flex: 1,
               overflowY: "auto",
               padding: "14px 16px",
               minHeight: 0,
-              WebkitOverflowScrolling: "touch",
             }}
           >
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "14px",
-              }}
-            >
+            <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
               <Field
                 label="Name"
                 name="username"
@@ -364,7 +341,7 @@ const MyProfile = ({ onClose }) => {
             </div>
           </div>
 
-          {/* ═══════ FOOTER ═══════ */}
+          {/* FOOTER */}
           <div
             style={{
               display: "flex",
@@ -389,7 +366,6 @@ const MyProfile = ({ onClose }) => {
                 color: "#374151",
                 border: "1px solid #9ca3af",
                 cursor: saving ? "not-allowed" : "pointer",
-                opacity: saving ? 0.5 : 1,
               }}
             >
               Cancel
@@ -416,20 +392,14 @@ const MyProfile = ({ onClose }) => {
         </div>
       </div>
 
-      {/* ═══════ IMAGE CONFIRM MODAL ═══════ */}
+      {/* IMAGE CONFIRM */}
       <ReusableModal
         isOpen={showModal}
         onClose={handleCancelImage}
         onConfirm={handleConfirmImage}
         title="Confirm Profile Picture"
         body={
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
             <img
               src={tempPreview}
               alt="Preview"
@@ -442,13 +412,7 @@ const MyProfile = ({ onClose }) => {
                 border: "1px solid #e5e7eb",
               }}
             />
-            <span
-              style={{
-                fontSize: "14px",
-                color: "#4b5563",
-                textAlign: "center",
-              }}
-            >
+            <span style={{ fontSize: "14px", color: "#4b5563", textAlign: "center" }}>
               Use this as your profile picture?
             </span>
           </div>
@@ -457,21 +421,11 @@ const MyProfile = ({ onClose }) => {
         confirmText={uploading ? "Uploading..." : "Upload"}
         confirmColor="blue"
       />
-    </>,
-    document.body
+    </>
   );
 };
 
-/* ═══════ FIELD COMPONENT ═══════ */
-const Field = ({
-  icon,
-  label,
-  name,
-  value,
-  onChange,
-  placeholder,
-  type = "text",
-}) => (
+const Field = ({ icon, label, name, value, onChange, placeholder, type = "text" }) => (
   <div>
     <label
       htmlFor={name}
@@ -495,8 +449,6 @@ const Field = ({
             transform: "translateY(-50%)",
             color: "#9ca3af",
             pointerEvents: "none",
-            display: "flex",
-            alignItems: "center",
           }}
         >
           {icon}
@@ -528,9 +480,7 @@ const Field = ({
   </div>
 );
 
-MyProfile.propTypes = {
-  onClose: PropTypes.func.isRequired,
-};
+MyProfile.propTypes = { onClose: PropTypes.func.isRequired };
 
 Field.propTypes = {
   icon: PropTypes.node,
