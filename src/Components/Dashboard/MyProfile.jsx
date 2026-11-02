@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { Pencil } from "lucide-react";
+import { Pencil, X, User, Mail, Camera } from "lucide-react";
 import axios from "axios";
 import ReusableModal from "../Modals/ReusableModal";
 import { useProfile } from "../../Context/ProfileContext";
@@ -13,14 +13,16 @@ const MyProfile = ({ onClose }) => {
   const [file, setFile] = useState(null);
   const [tempPreview, setTempPreview] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [saving, setSaving] = useState(false);       // ← NEW
-  const [uploading, setUploading] = useState(false); // ← NEW
-  const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-  });
+  const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [formData, setFormData] = useState({ username: "", email: "" });
 
-  const { user, fetchProfile, profilePictureUpdatedAt, updateProfilePictureTimestamp } = useProfile();
+  const {
+    user,
+    fetchProfile,
+    profilePictureUpdatedAt,
+    updateProfilePictureTimestamp,
+  } = useProfile();
 
   useEffect(() => {
     if (user) {
@@ -50,7 +52,6 @@ const MyProfile = ({ onClose }) => {
     reader.readAsDataURL(selectedFile);
   };
 
-  // ── Upload Profile Picture ─────────────────────────────
   const handleConfirmImage = async () => {
     if (!file || uploading) return;
     setUploading(true);
@@ -65,14 +66,17 @@ const MyProfile = ({ onClose }) => {
       const form = new FormData();
       form.append("profileImage", file);
 
-      const res = await axios.put(`${API_URL}/api/users/profile-picture`, form, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const res = await axios.put(
+        `${API_URL}/api/users/profile-picture`,
+        form,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
-      // ✅ Accept any 2xx as success
       updateProfilePictureTimestamp();
       await fetchProfile();
       setShowModal(false);
@@ -101,13 +105,10 @@ const MyProfile = ({ onClose }) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  // ── Save Profile ──────────────────────────────────────
   const handleSave = async (e) => {
     if (e) e.preventDefault();
     if (saving) return;
     setSaving(true);
-
-    console.log("Save clicked. Payload:", formData);   // ← DEBUG
 
     try {
       const token = localStorage.getItem("token");
@@ -126,9 +127,6 @@ const MyProfile = ({ onClose }) => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      console.log("Save response:", res.status, res.data);   // ← DEBUG
-
-      // ✅ Any 2xx = success unless backend explicitly says success: false
       const isSuccess =
         res.status >= 200 &&
         res.status < 300 &&
@@ -143,7 +141,6 @@ const MyProfile = ({ onClose }) => {
       }
     } catch (err) {
       console.error("Update error:", err);
-      console.error("Response data:", err.response?.data);   // ← DEBUG
       const msg =
         err.response?.data?.message ||
         err.response?.data?.error ||
@@ -156,7 +153,130 @@ const MyProfile = ({ onClose }) => {
   };
 
   return (
-    <div className="fixed top-16 right-0 z-50 px-4 font-['Outfit']">
+    <>
+      {/* ─── Backdrop (mobile: full-screen; desktop: transparent) ─── */}
+      <div
+        className="fixed inset-0 z-40 bg-black/40 sm:bg-transparent sm:pointer-events-none"
+        onClick={onClose}
+      />
+
+      {/* ─── Modal Container ──────────────────────────────────── */}
+      <div
+        className="fixed z-50 inset-x-0 bottom-0 sm:inset-auto sm:top-16 sm:right-0
+                   px-0 sm:px-4 font-['Outfit']"
+      >
+        <div
+          className="w-full sm:w-[420px] bg-white rounded-t-2xl sm:rounded-xl shadow-2xl
+                     max-h-[90vh] overflow-y-auto
+                     px-5 sm:px-6 py-6 sm:py-8 relative"
+        >
+          {/* Close button */}
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute top-4 right-4 p-1.5 rounded-lg text-gray-400
+                       hover:text-gray-700 hover:bg-gray-100 transition"
+            aria-label="Close"
+          >
+            <X size={20} />
+          </button>
+
+          {/* ─── Header: avatar + name ─────────────────────── */}
+          <div className="flex items-center gap-4 mb-6">
+            <div className="relative flex-shrink-0">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 border-gray-200 bg-gray-50">
+                {preview ? (
+                  <img
+                    src={preview}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-gray-400">
+                    <User size={28} />
+                  </div>
+                )}
+              </div>
+
+              {/* Edit icon overlay */}
+              <button
+                type="button"
+                onClick={handleEditIconClick}
+                className="absolute bottom-0 right-0 w-7 h-7 bg-white border border-gray-200
+                           rounded-full shadow flex items-center justify-center
+                           hover:bg-gray-50 transition"
+                aria-label="Change profile picture"
+              >
+                <Camera size={14} className="text-gray-600" />
+              </button>
+
+              <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                onChange={handleFileChange}
+                accept="image/*"
+              />
+            </div>
+
+            <div className="min-w-0 flex-1">
+              <p className="text-base sm:text-lg font-semibold text-gray-900 truncate">
+                {formData.username || "Unnamed user"}
+              </p>
+              <p className="text-sm text-gray-500 truncate">
+                {formData.email || "No email"}
+              </p>
+            </div>
+          </div>
+
+          {/* ─── Form fields ───────────────────────────────── */}
+          <div className="space-y-4">
+            <ProfileField
+              icon={<User size={16} />}
+              label="Name"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              placeholder="Enter your name"
+            />
+            <ProfileField
+              icon={<Mail size={16} />}
+              label="Email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Enter your email"
+              type="email"
+            />
+          </div>
+
+          {/* ─── Actions ───────────────────────────────────── */}
+          <div className="pt-6 mt-6 border-t border-gray-100 flex flex-col-reverse sm:flex-row gap-2 sm:justify-end">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={saving}
+              className="w-full sm:w-auto px-5 py-2.5 rounded-lg text-sm font-medium
+                         bg-gray-100 text-gray-700 hover:bg-gray-200
+                         transition disabled:opacity-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={saving}
+              className="w-full sm:w-auto px-5 py-2.5 rounded-lg text-sm font-semibold
+                         bg-[#007bff] text-white hover:bg-blue-700
+                         transition disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {saving ? "Saving..." : "Save changes"}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* ─── Image confirm modal (already ReusableModal, works) ─── */}
       <ReusableModal
         isOpen={showModal}
         onClose={handleCancelImage}
@@ -169,106 +289,50 @@ const MyProfile = ({ onClose }) => {
               alt="Preview"
               className="w-32 h-32 rounded-full object-cover mb-4 border"
             />
-            <span>Use this as your profile picture?</span>
+            <span className="text-center text-sm text-gray-600">
+              Use this as your profile picture?
+            </span>
           </div>
         }
         cancelText="Cancel"
         confirmText={uploading ? "Uploading..." : "Upload"}
         confirmColor="blue"
       />
-
-      <div className="w-[420px] bg-white rounded-xl shadow-xl px-6 py-8 relative">
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl"
-        >
-          &times;
-        </button>
-
-        <div className="flex items-center gap-4 mb-6">
-          <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-gray-300">
-            {preview ? (
-              <img src={preview} alt="Profile" className="w-full h-full object-cover" />
-            ) : (
-              <div className="flex items-center justify-center w-full h-full bg-gray-100 text-sm text-gray-400">
-                No Image
-              </div>
-            )}
-            <button
-              type="button"
-              onClick={handleEditIconClick}
-              className="absolute bottom-0 right-0 bg-white p-1 rounded-full shadow"
-            >
-              <Pencil size={14} className="text-gray-600" />
-            </button>
-            <input
-              type="file"
-              ref={fileInputRef}
-              className="hidden"
-              onChange={handleFileChange}
-              accept="image/*"
-            />
-          </div>
-          <div>
-            <p className="text-base font-semibold text-gray-800">{formData.username}</p>
-            <p className="text-sm text-gray-500">{formData.email}</p>
-          </div>
-        </div>
-
-        {/* ✅ Changed from <form> to <div> + manual onClick — bypasses any form submit issues */}
-        <div className="space-y-4 text-sm text-gray-700">
-          <ProfileField
-            label="Name"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            placeholder="Enter your name"
-          />
-          <ProfileField
-            label="Email account"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="Enter your email"
-            type="email"
-          />
-          <div className="pt-4 flex justify-start gap-2">
-            <button
-              type="button"
-              onClick={onClose}
-              disabled={saving}
-              className="bg-gray-500 text-white px-5 py-2 rounded-md hover:bg-gray-700 transition disabled:opacity-50"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={saving}
-              className="bg-[#007bff] text-white px-5 py-2 rounded-md hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {saving ? "Saving..." : "Save Changes"}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+    </>
   );
 };
 
-const ProfileField = ({ label, name, value, onChange, placeholder, type = "text" }) => (
-  <div className="flex justify-between border-b pb-2 items-center">
-    <label className="font-medium w-1/2">{label}</label>
-    <input
-      name={name}
-      type={type}
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      className="w-1/2 text-right outline-none text-gray-900"
-      // ✅ Removed `required` — prevents silent validation blocks
-    />
+// ─── Reusable form field with icon ────────────────────────
+const ProfileField = ({
+  icon,
+  label,
+  name,
+  value,
+  onChange,
+  placeholder,
+  type = "text",
+}) => (
+  <div>
+    <label
+      htmlFor={name}
+      className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5"
+    >
+      {label}
+    </label>
+    <div className="flex items-center border border-gray-200 rounded-lg px-3 py-2.5 bg-white focus-within:ring-2 focus-within:ring-blue-100 focus-within:border-blue-500 transition">
+      {icon && (
+        <span className="text-gray-400 flex-shrink-0 mr-2">{icon}</span>
+      )}
+      <input
+        id={name}
+        name={name}
+        type={type}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        className="flex-grow outline-none bg-transparent text-sm text-gray-900"
+      />
+    </div>
   </div>
 );
 
@@ -277,6 +341,7 @@ MyProfile.propTypes = {
 };
 
 ProfileField.propTypes = {
+  icon: PropTypes.node,
   label: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   value: PropTypes.string.isRequired,
