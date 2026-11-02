@@ -154,85 +154,88 @@ const MyProfile = ({ onClose }) => {
 
   return (
     <>
-      {/* ─── Backdrop (mobile: full-screen; desktop: transparent) ─── */}
+      {/* ─── Backdrop ─────────────────────────────── */}
       <div
         className="fixed inset-0 z-40 bg-black/40 sm:bg-transparent sm:pointer-events-none"
         onClick={onClose}
       />
 
-      {/* ─── Modal Container ──────────────────────────────────── */}
+      {/* ─── Modal Panel ──────────────────────────── */}
       <div
-        className="fixed z-50 inset-x-0 bottom-0 sm:inset-auto sm:top-16 sm:right-0
-                   px-0 sm:px-4 font-['Outfit']"
+        className="fixed z-50 inset-x-0 bottom-0 sm:inset-auto sm:top-16 sm:right-4
+                   flex justify-center sm:justify-end
+                   px-3 sm:px-4 font-['Outfit']"
       >
         <div
-          className="w-full sm:w-[420px] bg-white rounded-t-2xl sm:rounded-xl shadow-2xl
-                     max-h-[90vh] overflow-y-auto
-                     px-5 sm:px-6 py-6 sm:py-8 relative"
+          className="w-full max-w-md sm:max-w-md sm:w-[420px] bg-white
+                     rounded-t-2xl sm:rounded-xl shadow-2xl
+                     max-h-[90vh] sm:max-h-[85vh] overflow-y-auto
+                     px-4 sm:px-6 py-5 sm:py-7 relative"
         >
-          {/* Close button */}
-          <button
-            type="button"
-            onClick={onClose}
-            className="absolute top-4 right-4 p-1.5 rounded-lg text-gray-400
-                       hover:text-gray-700 hover:bg-gray-100 transition"
-            aria-label="Close"
-          >
-            <X size={20} />
-          </button>
-
-          {/* ─── Header: avatar + name ─────────────────────── */}
-          <div className="flex items-center gap-4 mb-6">
-            <div className="relative flex-shrink-0">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 border-gray-200 bg-gray-50">
-                {preview ? (
-                  <img
-                    src={preview}
-                    alt="Profile"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-400">
-                    <User size={28} />
-                  </div>
-                )}
+          {/* ─── Header ─────────────────────────── */}
+          <div className="flex items-start justify-between gap-3 mb-5 sm:mb-6">
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              {/* Avatar */}
+              <div className="relative flex-shrink-0">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 border-gray-200 bg-gray-50">
+                  {preview ? (
+                    <img
+                      src={preview}
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+                      <User size={24} />
+                    </div>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={handleEditIconClick}
+                  className="absolute -bottom-1 -right-1 w-6 h-6 bg-white border border-gray-200
+                             rounded-full shadow-sm flex items-center justify-center
+                             hover:bg-gray-50 active:bg-gray-100 transition"
+                  aria-label="Change profile picture"
+                >
+                  <Camera size={12} className="text-gray-600" />
+                </button>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  className="hidden"
+                  onChange={handleFileChange}
+                  accept="image/*"
+                />
               </div>
 
-              {/* Edit icon overlay */}
-              <button
-                type="button"
-                onClick={handleEditIconClick}
-                className="absolute bottom-0 right-0 w-7 h-7 bg-white border border-gray-200
-                           rounded-full shadow flex items-center justify-center
-                           hover:bg-gray-50 transition"
-                aria-label="Change profile picture"
-              >
-                <Camera size={14} className="text-gray-600" />
-              </button>
-
-              <input
-                type="file"
-                ref={fileInputRef}
-                className="hidden"
-                onChange={handleFileChange}
-                accept="image/*"
-              />
+              {/* Name + email */}
+              <div className="min-w-0 flex-1">
+                <p className="text-sm sm:text-base font-semibold text-gray-900 truncate">
+                  {formData.username || "Unnamed user"}
+                </p>
+                <p className="text-xs sm:text-sm text-gray-500 truncate">
+                  {formData.email || "No email"}
+                </p>
+              </div>
             </div>
 
-            <div className="min-w-0 flex-1">
-              <p className="text-base sm:text-lg font-semibold text-gray-900 truncate">
-                {formData.username || "Unnamed user"}
-              </p>
-              <p className="text-sm text-gray-500 truncate">
-                {formData.email || "No email"}
-              </p>
-            </div>
+            {/* Close button */}
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-shrink-0 p-1.5 rounded-lg text-gray-400
+                         hover:text-gray-700 hover:bg-gray-100 transition"
+              aria-label="Close"
+            >
+              <X size={18} />
+            </button>
           </div>
 
-          {/* ─── Form fields ───────────────────────────────── */}
-          <div className="space-y-4">
+          {/* ─── Fields ─────────────────────────── */}
+          <div className="space-y-3.5 sm:space-y-4">
             <ProfileField
-              icon={<User size={16} />}
+              icon={<User size={14} />}
               label="Name"
               name="username"
               value={formData.username}
@@ -240,8 +243,8 @@ const MyProfile = ({ onClose }) => {
               placeholder="Enter your name"
             />
             <ProfileField
-              icon={<Mail size={16} />}
-              label="Email"
+              icon={<Mail size={14} />}
+              label="Email account"
               name="email"
               value={formData.email}
               onChange={handleChange}
@@ -250,14 +253,14 @@ const MyProfile = ({ onClose }) => {
             />
           </div>
 
-          {/* ─── Actions ───────────────────────────────────── */}
-          <div className="pt-6 mt-6 border-t border-gray-100 flex flex-col-reverse sm:flex-row gap-2 sm:justify-end">
+          {/* ─── Buttons ────────────────────────── */}
+          <div className="pt-4 mt-5 border-t border-gray-100 flex flex-col-reverse sm:flex-row gap-2 sm:justify-end">
             <button
               type="button"
               onClick={onClose}
               disabled={saving}
-              className="w-full sm:w-auto px-5 py-2.5 rounded-lg text-sm font-medium
-                         bg-gray-100 text-gray-700 hover:bg-gray-200
+              className="w-full sm:w-auto px-4 py-2.5 rounded-lg text-sm font-medium
+                         bg-gray-100 text-gray-700 hover:bg-gray-200 active:bg-gray-300
                          transition disabled:opacity-50"
             >
               Cancel
@@ -266,17 +269,17 @@ const MyProfile = ({ onClose }) => {
               type="button"
               onClick={handleSave}
               disabled={saving}
-              className="w-full sm:w-auto px-5 py-2.5 rounded-lg text-sm font-semibold
-                         bg-[#007bff] text-white hover:bg-blue-700
+              className="w-full sm:w-auto px-4 py-2.5 rounded-lg text-sm font-semibold
+                         bg-[#007bff] text-white hover:bg-blue-700 active:bg-blue-800
                          transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {saving ? "Saving..." : "Save changes"}
+              {saving ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </div>
       </div>
 
-      {/* ─── Image confirm modal (already ReusableModal, works) ─── */}
+      {/* ─── Image Confirm ──────────────────────── */}
       <ReusableModal
         isOpen={showModal}
         onClose={handleCancelImage}
@@ -287,7 +290,7 @@ const MyProfile = ({ onClose }) => {
             <img
               src={tempPreview}
               alt="Preview"
-              className="w-32 h-32 rounded-full object-cover mb-4 border"
+              className="w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover mb-4 border"
             />
             <span className="text-center text-sm text-gray-600">
               Use this as your profile picture?
@@ -302,7 +305,7 @@ const MyProfile = ({ onClose }) => {
   );
 };
 
-// ─── Reusable form field with icon ────────────────────────
+// ─── Reusable field ─────────────────────────────
 const ProfileField = ({
   icon,
   label,
@@ -315,11 +318,11 @@ const ProfileField = ({
   <div>
     <label
       htmlFor={name}
-      className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5"
+      className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1"
     >
       {label}
     </label>
-    <div className="flex items-center border border-gray-200 rounded-lg px-3 py-2.5 bg-white focus-within:ring-2 focus-within:ring-blue-100 focus-within:border-blue-500 transition">
+    <div className="flex items-center border border-gray-200 rounded-lg px-3 py-2 bg-white focus-within:ring-2 focus-within:ring-blue-100 focus-within:border-blue-500 transition">
       {icon && (
         <span className="text-gray-400 flex-shrink-0 mr-2">{icon}</span>
       )}
@@ -330,7 +333,7 @@ const ProfileField = ({
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className="flex-grow outline-none bg-transparent text-sm text-gray-900"
+        className="flex-grow min-w-0 outline-none bg-transparent text-sm text-gray-900"
       />
     </div>
   </div>
