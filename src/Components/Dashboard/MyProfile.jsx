@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { Pencil, X, User, Mail, Camera } from "lucide-react";
+import { X, User, Mail, Camera } from "lucide-react";
 import axios from "axios";
 import ReusableModal from "../Modals/ReusableModal";
 import { useProfile } from "../../Context/ProfileContext";
@@ -32,6 +32,24 @@ const MyProfile = ({ onClose }) => {
       });
     }
   }, [user]);
+
+  // Lock body scroll while modal is open (mobile friendly)
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, []);
+
+  // Close on Escape key
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [onClose]);
 
   const fileName = user?.profile_picture?.split("/").pop();
   const preview = fileName
@@ -154,26 +172,32 @@ const MyProfile = ({ onClose }) => {
 
   return (
     <>
-      {/* ─── Backdrop ─────────────────────────────── */}
+      {/* ─── Backdrop ─── */}
       <div
-        className="fixed inset-0 z-40 bg-black/40 sm:bg-transparent sm:pointer-events-none"
+        className="fixed inset-0 z-40 bg-black/50 backdrop-blur-[2px]"
         onClick={onClose}
+        aria-hidden="true"
       />
 
-      {/* ─── Modal Panel ──────────────────────────── */}
+      {/* ─── Modal Wrapper ─── */}
       <div
-        className="fixed z-50 inset-x-0 bottom-0 sm:inset-auto sm:top-16 sm:right-4
-                   flex justify-center sm:justify-end
-                   px-3 sm:px-4 font-['Outfit']"
+        className="fixed inset-0 z-50 flex items-end sm:items-start justify-center
+                   sm:justify-end sm:pt-16 sm:pr-4 p-0 sm:p-4
+                   font-['Outfit'] pointer-events-none"
       >
+        {/* ─── Modal Panel ─── */}
         <div
-          className="w-full max-w-md sm:max-w-md sm:w-[420px] bg-white
+          className="pointer-events-auto w-full sm:w-[420px] max-w-full bg-white
                      rounded-t-2xl sm:rounded-xl shadow-2xl
-                     max-h-[90vh] sm:max-h-[85vh] overflow-y-auto
-                     px-4 sm:px-6 py-5 sm:py-7 relative"
+                     flex flex-col
+                     max-h-[92vh] sm:max-h-[85vh]
+                     overflow-hidden"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Profile settings"
         >
-          {/* ─── Header ─────────────────────────── */}
-          <div className="flex items-start justify-between gap-3 mb-5 sm:mb-6">
+          {/* ─── Fixed Header ─── */}
+          <div className="flex items-start justify-between gap-3 px-5 sm:px-6 pt-5 sm:pt-6 pb-4 border-b border-gray-100">
             <div className="flex items-center gap-3 min-w-0 flex-1">
               {/* Avatar */}
               <div className="relative flex-shrink-0">
@@ -232,35 +256,39 @@ const MyProfile = ({ onClose }) => {
             </button>
           </div>
 
-          {/* ─── Fields ─────────────────────────── */}
-          <div className="space-y-3.5 sm:space-y-4">
-            <ProfileField
-              icon={<User size={14} />}
-              label="Name"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              placeholder="Enter your name"
-            />
-            <ProfileField
-              icon={<Mail size={14} />}
-              label="Email account"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Enter your email"
-              type="email"
-            />
+          {/* ─── Scrollable Body ─── */}
+          <div className="flex-1 overflow-y-auto px-5 sm:px-6 py-4 sm:py-5">
+            <div className="space-y-3.5 sm:space-y-4">
+              <ProfileField
+                icon={<User size={14} />}
+                label="Name"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                placeholder="Enter your name"
+              />
+              <ProfileField
+                icon={<Mail size={14} />}
+                label="Email account"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Enter your email"
+                type="email"
+              />
+            </div>
           </div>
 
-          {/* ─── Buttons ────────────────────────── */}
-          <div className="pt-4 mt-5 border-t border-gray-100 flex flex-col-reverse sm:flex-row gap-2 sm:justify-end">
+          {/* ─── Fixed Footer ─── */}
+          <div className="flex flex-col-reverse sm:flex-row gap-2 sm:justify-end
+                          px-5 sm:px-6 py-4 border-t border-gray-100 bg-gray-50/50">
             <button
               type="button"
               onClick={onClose}
               disabled={saving}
               className="w-full sm:w-auto px-4 py-2.5 rounded-lg text-sm font-medium
-                         bg-gray-100 text-gray-700 hover:bg-gray-200 active:bg-gray-300
+                         bg-white border border-gray-200 text-gray-700
+                         hover:bg-gray-100 active:bg-gray-200
                          transition disabled:opacity-50"
             >
               Cancel
@@ -279,7 +307,7 @@ const MyProfile = ({ onClose }) => {
         </div>
       </div>
 
-      {/* ─── Image Confirm ──────────────────────── */}
+      {/* ─── Image Confirm Modal ─── */}
       <ReusableModal
         isOpen={showModal}
         onClose={handleCancelImage}
@@ -305,7 +333,7 @@ const MyProfile = ({ onClose }) => {
   );
 };
 
-// ─── Reusable field ─────────────────────────────
+// ─── Reusable field ───
 const ProfileField = ({
   icon,
   label,
