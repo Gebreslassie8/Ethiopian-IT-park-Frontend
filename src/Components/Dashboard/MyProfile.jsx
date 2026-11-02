@@ -158,30 +158,31 @@ const MyProfile = ({ onClose }) => {
 
   return (
     <>
-      {/* ══════════ Backdrop ══════════ */}
+      {/* ═══════ BACKDROP ═══════ */}
       <div
-        className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm"
+        className="fixed inset-0 bg-black/50"
+        style={{ zIndex: 100 }}
         onClick={onClose}
         aria-hidden="true"
       />
 
-      {/* ══════════ Modal Wrapper ══════════ */}
+      {/* ═══════ MODAL WRAPPER ═══════ */}
       <div
-        className="fixed inset-0 z-[101] flex items-center justify-center p-4
+        className="fixed inset-0 flex items-center justify-center p-4
                    sm:items-start sm:justify-end sm:p-6 sm:pt-20"
+        style={{ zIndex: 101 }}
       >
-        {/* ══════════ Modal Panel ══════════ */}
+        {/* ═══════ MODAL PANEL ═══════ */}
         <div
-          className="w-full max-w-md sm:max-w-sm bg-white rounded-2xl shadow-2xl
-                     flex flex-col max-h-[90vh] overflow-hidden
-                     animate-in zoom-in-95 duration-200"
+          className="w-full max-w-md sm:max-w-sm bg-white rounded-2xl shadow-2xl flex flex-col"
+          style={{ maxHeight: "90vh" }}
           role="dialog"
           aria-modal="true"
           aria-labelledby="profile-title"
         >
-          {/* ───── Header ───── */}
+          {/* ═══════ HEADER ═══════ */}
           <div className="flex items-start gap-3 px-5 pt-5 pb-4 border-b border-gray-100">
-            {/* Avatar with edit badge */}
+            {/* Avatar */}
             <div className="relative shrink-0">
               <div className="w-14 h-14 rounded-full overflow-hidden ring-2 ring-gray-100 bg-gray-50">
                 {preview ? (
@@ -199,9 +200,7 @@ const MyProfile = ({ onClose }) => {
               <button
                 type="button"
                 onClick={handleEditIconClick}
-                className="absolute -bottom-0.5 -right-0.5 w-6 h-6 bg-white border border-gray-200
-                           rounded-full shadow flex items-center justify-center
-                           hover:bg-gray-50 active:scale-95 transition"
+                className="absolute -bottom-0.5 -right-0.5 w-6 h-6 bg-white border border-gray-200 rounded-full shadow flex items-center justify-center"
                 aria-label="Change profile picture"
               >
                 <Camera size={11} className="text-gray-600" />
@@ -228,19 +227,18 @@ const MyProfile = ({ onClose }) => {
               </p>
             </div>
 
-            {/* Close button */}
+            {/* Close */}
             <button
               type="button"
               onClick={onClose}
-              className="shrink-0 -mr-1 p-1.5 rounded-lg text-gray-400
-                         hover:text-gray-700 hover:bg-gray-100 transition"
+              className="shrink-0 -mr-1 p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100"
               aria-label="Close"
             >
               <X size={18} />
             </button>
           </div>
 
-          {/* ───── Body ───── */}
+          {/* ═══════ BODY ═══════ */}
           <div className="flex-1 overflow-y-auto px-5 py-4">
             <div className="space-y-4">
               <Field
@@ -263,15 +261,13 @@ const MyProfile = ({ onClose }) => {
             </div>
           </div>
 
-          {/* ───── Footer ───── */}
-          <div className="flex gap-2 justify-end px-5 py-3.5 border-t border-gray-100 bg-gray-50/50">
+          {/* ═══════ FOOTER ═══════ */}
+          <div className="flex gap-2 justify-end px-5 py-3.5 border-t border-gray-100 bg-gray-50">
             <button
               type="button"
               onClick={onClose}
               disabled={saving}
-              className="px-4 py-2 rounded-lg text-sm font-medium
-                         bg-white border border-gray-200 text-gray-700
-                         hover:bg-gray-100 transition disabled:opacity-50"
+              className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 bg-white border border-gray-200 hover:bg-gray-100"
             >
               Cancel
             </button>
@@ -279,17 +275,19 @@ const MyProfile = ({ onClose }) => {
               type="button"
               onClick={handleSave}
               disabled={saving}
-              className="px-4 py-2 rounded-lg text-sm font-semibold
-                         bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800
-                         transition disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{
+                backgroundColor: saving ? "#93c5fd" : "#2563eb",
+                color: "#ffffff",
+              }}
+              className="px-4 py-2 rounded-lg text-sm font-semibold"
             >
-              {saving ? "Saving..." : "Save"}
+              {saving ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </div>
       </div>
 
-      {/* ══════════ Image Confirm ══════════ */}
+      {/* ═══════ IMAGE CONFIRM MODAL ═══════ */}
       <ReusableModal
         isOpen={showModal}
         onClose={handleCancelImage}
@@ -315,13 +313,10 @@ const MyProfile = ({ onClose }) => {
   );
 };
 
-/* ───── Reusable field component ───── */
+/* ═══════ FIELD COMPONENT ═══════ */
 const Field = ({ icon, label, name, value, onChange, placeholder, type = "text" }) => (
   <div>
-    <label
-      htmlFor={name}
-      className="block text-xs font-medium text-gray-600 mb-1.5"
-    >
+    <label htmlFor={name} className="block text-xs font-medium text-gray-600 mb-1.5">
       {label}
     </label>
     <div className="relative">
@@ -337,10 +332,7 @@ const Field = ({ icon, label, name, value, onChange, placeholder, type = "text" 
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className="w-full pl-10 pr-3 py-2.5 text-sm text-gray-900 bg-white
-                   border border-gray-200 rounded-lg
-                   focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500
-                   transition"
+        className="w-full pl-10 pr-3 py-2.5 text-sm text-gray-900 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500"
       />
     </div>
   </div>
