@@ -33,33 +33,39 @@ export default function DashboardLayout({ role, children }) {
   }, [showNotification]);
 
   return (
-    <div className="h-screen flex" style={{ backgroundColor: Colors.backgroundColor }}>
-      <SidebarWithRole
-        role={role}
-        isSidebarOpen={isSidebarOpen}
-        setIsSidebarOpen={setIsSidebarOpen}
-        isMobile={isMobile}
-      />
-
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <DashboardHeader
-          isMobile={isMobile}
+    <>
+      <div
+        className="h-screen flex"
+        style={{ backgroundColor: Colors.backgroundColor }}
+      >
+        <SidebarWithRole
+          role={role}
+          isSidebarOpen={isSidebarOpen}
           setIsSidebarOpen={setIsSidebarOpen}
-          onProfileClick={() => setShowProfile(true)}
-          onNotificationClick={() => setShowNotification(true)}
-          onSettingsClick={() => setShowSettings(true)}
+          isMobile={isMobile}
         />
 
-        <div
-          className="flex-1 overflow-y-auto p-6 relative text-base md:text-xl"
-          style={{ color: Colors.smokyGray }}
-        >
-          {loading ? <p>Loading profile...</p> : children}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <DashboardHeader
+            isMobile={isMobile}
+            setIsSidebarOpen={setIsSidebarOpen}
+            onProfileClick={() => setShowProfile(true)}
+            onNotificationClick={() => setShowNotification(true)}
+            onSettingsClick={() => setShowSettings(true)}
+          />
+
+          <div
+            className="flex-1 overflow-y-auto p-6 relative text-base md:text-xl"
+            style={{ color: Colors.smokyGray }}
+          >
+            {loading ? <p>Loading profile...</p> : children}
+          </div>
         </div>
       </div>
 
-      {/* ─── Modals rendered OUTSIDE the content area ─── */}
+      {/* ──────── MODALS AT ROOT LEVEL — NOT INSIDE SCROLLING CONTAINER ──────── */}
       {showProfile && <MyProfile onClose={() => setShowProfile(false)} />}
+
       {showNotification && (
         <Notification
           type="success"
@@ -67,7 +73,8 @@ export default function DashboardLayout({ role, children }) {
           onClose={() => setShowNotification(false)}
         />
       )}
+
       {showSettings && <Settings onClose={() => setShowSettings(false)} />}
-    </div>
+    </>
   );
 }
